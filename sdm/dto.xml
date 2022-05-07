@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dto-classes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:noNamespaceSchemaLocation="dto.xsd">
+
+    <dto-class name="dj-Group" ref="groups"/>
+
+    <dto-class name="dj-GroupEx" ref="get_groups.sql">
+        <field column="g_id" type="|1:, primary_key=True"/>
+    </dto-class>
+
+    <dto-class name="dj-Task" ref="tasks"/>
+
+</dto-classes>
