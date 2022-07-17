@@ -7,6 +7,10 @@ body {
 .bg {
 }
 
+h2 {
+    margin: 8px;
+}
+
 table.bg td {
     vertical-align: top;
 }

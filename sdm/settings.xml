@@ -2,73 +2,22 @@
 <settings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:noNamespaceSchemaLocation="settings.xsd">
 
-    <!-- target: base folder of generated files (relative to the project root); -->
-    <!-- sql: base folder of SQL files (relative to the project root); -->
-
     <folders target="dal" sql="sdm/sql"/>
 
-    <!-- scope: (only Java and PHP) package name of DTO classes for Java or 
-    namespace name of DTO classes for PHP; -->
-    <!-- inheritance: (only Java) fully-qualified name of base class; example 
-    for GWT: 1) inheritance="implements com.google.gwt.user.client.rpc.IsSerializable" 
-    2) target class: public class Word implements com.google.gwt.user.client.rpc.IsSerializable... -->
-    <!-- field-names-mode: (only Java) 0 - as column names; 1 - lowerCamelCase; 
-    2 - lower_case_underscores; -->
-
-    <dto scope="" inheritance="" field-names-mode="0" single-file="" macro=""/>
-
-    <!-- scope: (only Java and PHP) package name of DAO classes for Java or 
-    namespace name of DAO classes for PHP; -->
+    <dto scope="" inheritance="" field-names-mode="2" macro=""/>
 
     <dao scope="" macro=""/>
 
-    <!-- path: location of external VM file (relative to the project root); -->
-
     <external-vm-file path=""/>
-
-    <!-- IDE integration -->
 
     <ide event-log="true"/>
 
-    <!-- class-prefix: prefix of generated C++ classes -->
-
     <cpp class-prefix=""/>
-
-    <!-- jar: location of JDBC driver JAR file (relative to the project root); -->
-    <!-- class: JDBC driver class name; -->
-    <!-- url: JDBC connection URL (use $PROJECT_DIR$ or ${project_loc} if you need to specify project path); -->
-    <!-- user: user name; -->
-    <!-- pwd: password; -->
 
     <jdbc jar="sdm/sqlite-jdbc-3.36.0.3.jar" class="org.sqlite.JDBC"
           url="jdbc:sqlite:$PROJECT_DIR$/todolist.sqlite3" user="" pwd=""/>
 
     <type-map default="">
-
-        <!-- ***** sqlalchemy (sa) ****************** -->
-
-        <!-- https://github.com/panedrone/sqldalmaker/blob/master/src/resources/data_store_sqlalchemy.py-->
-
-        <!-- all numerics for oracle_cx -->
-
-        <!--        <type detected="sa-java.math.BigDecimal" target="${sa-type}|0:NUMBER"/>-->
-
-        <!-- numerics for others -->
-
-        <type detected="sa-java.lang.Short" target="${sa-type}|0:SmallInteger"/>
-        <type detected="sa-java.lang.Integer" target="${sa-type}|0:Integer"/>
-        <type detected="sa-java.lang.Long" target="${sa-type}|0:BigInteger"/>
-
-        <type detected="sa-java.lang.Float" target="${sa-type}|0:Float"/>
-        <type detected="sa-java.lang.Double" target="${sa-type}|0:Float"/>
-        <type detected="sa-java.math.BigDecimal" target="${sa-type}|0:Float"/>
-
-        <type detected="sa-java.util.Date" target="${sa-type}|0:DateTime"/>
-        <type detected="sa-java.lang.String" target="${sa-type}|0:String"/>
-        <type detected="sa-java.lang.Boolean" target="${sa-type}|0:Boolean"/>
-        <type detected="sa-byte[]" target="${sa-type}|0:LargeBinary"/>
-
-        <type detected="sa-java.lang.Object" target="${sa-type-unknown}"/>
 
         <!-- ***** django (dj) ****************** -->
 
@@ -128,17 +77,6 @@
         <macro name="${TitleCase(column)}" value="=built-in="/>
         <macro name="${kebab-case(column)}" value="=built-in="/>
 
-        <!-- go json tags: -->
-
-        <macro name="${col}" value="${lower_snake_case(column)}"/>
-
-        <macro name="${json}" value=" `json:&quot;${col}${0}&quot;`"/>
-
-        <!-- sqlalchemy Column: -->
-
-        <macro name="${sa-type-unknown}" value="${sa-column-base}|type:"/>
-        <macro name="${sa-type}" value="${sa-column-base}|type:, ${0}"/>
-
         <!-- djando field: -->
 
         <macro name="${dj-type}" value="${dj-field}"/>
@@ -149,7 +87,9 @@
                 class FieldInfo:
                     String getName()
                     String getType()
+                    String getScalarType()
                     String getColumnName()
+                    int getColumnSize()
                     boolean isAI()
                     boolean isPK()
                     String getFK()
@@ -159,20 +99,7 @@
                     String getComment()
                     String getterMethod()
                     String setterMethod()
-                        -->
-
-        <macro name="${sa-column-base}">
-            <vm>
-                <![CDATA[= Column('${column}'${type}#if($fi.ColumnSize>0)($fi.ColumnSize)#end#if($fi.FK), ForeignKey('$fi.FK')#end
-#if($fi.PK), primary_key=True#end
-#if($fi.AI), autoincrement=True#end
-#if(!$fi.PK)
-#if($fi.Indexed), index=True#end
-#if($fi.Unique), unique=True#end
-#if($fi.Nullable), nullable=True#end
-#end)${comment}]]>
-            </vm>
-        </macro>
+           -->
 
         <macro name="${dj-field}">
             <vm>
@@ -184,36 +111,6 @@
 #if($fi.Nullable), blank=True, null=True#end
 #end${1})${comment}]]>
             </vm>
-        </macro>
-
-        <macro name="${sa-column-base2}">
-            <vm-xml>
-                <print var="= Column('${column}'${type}"/>
-                <if var="$fi.ColumnSize>0">
-                    <print var="($fi.ColumnSize)"/>
-                </if>
-                <if var="$fi.FK">
-                    <print var=", ForeignKey('$fi.FK')"/>
-                </if>
-                <if var="$fi.PK">
-                    <print var=", primary_key=True"/>
-                </if>
-                <if var="$fi.AI">
-                    <print var=", autoincrement=True"/>
-                </if>
-                <if var="!$fi.PK">
-                    <if var="$fi.Indexed">
-                        <print var=", index=True"/>
-                    </if>
-                    <if var="$fi.Unique">
-                        <print var=", unique=True"/>
-                    </if>
-                    <if var="$fi.Nullable">
-                        <print var=", nullable=True"/>
-                    </if>
-                </if>
-                <print var=")${comment}"/>
-            </vm-xml>
         </macro>
 
         <macro name="${dj-field2}">
