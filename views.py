@@ -64,7 +64,7 @@ class GroupView(APIView):
 
     @staticmethod
     def put(request, g_id):
-        obj = Group.objects.get(g_id=g_id)
+        obj = get_object_or_404(Group, g_id=g_id)
         serializer = GroupSerializer(obj, data=request.data, partial=True)
         serializer.is_valid(raise_exception = True)
         serializer.save()
@@ -122,7 +122,7 @@ class TaskView(APIView):
     @staticmethod
     def put(request, t_id):
         # https://stackoverflow.com/questions/69071531/how-to-use-django-serializer-to-update-an-instance
-        obj = Task.objects.get(t_id=t_id)
+        obj = get_object_or_404(Task, t_id=t_id)
         task = TaskSerializer(obj, data=request.data, partial=True)
         # https://stackoverflow.com/questions/65155286/create-object-with-serializer-django-drf
         task.is_valid(raise_exception = True)
