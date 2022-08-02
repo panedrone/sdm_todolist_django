@@ -7,20 +7,28 @@ from rest_framework.views import APIView
 
 from dal.data_store import DataStore
 from dal.group import Group
-from dal.group_ex import GroupEx
+from dal.group_li import GroupLI
 from dal.task import Task
 
 
-class GroupExSerializer(serializers.HyperlinkedModelSerializer):
+class GroupLISerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = GroupEx
-        fields = ['g_id', 'g_name', 'tasks_count']
+        model = GroupLI
+        fields = ['g_id', 'g_name', 'g_tasks_count']
 
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Group
         fields = ['g_id', 'g_name']
+
+
+# list item without comments:
+
+class TaskLISerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Task
+        fields = ['t_id', 'g_id', 't_priority', 't_date', 't_subject']
 
 
 class TaskSerializer(serializers.HyperlinkedModelSerializer):
@@ -33,8 +41,8 @@ class GroupListView(APIView):
     # https://www.youtube.com/watch?v=b680A5fteEo
     @staticmethod
     def get(request):
-        queryset = DataStore.get_all(GroupEx)  # get_all uses raw-sql, and this sql performs "order by"
-        serializer = GroupExSerializer(queryset, many=True)
+        queryset = DataStore.get_all(GroupLI)  # get_all uses raw-sql, and this sql performs "order by"
+        serializer = GroupLISerializer(queryset, many=True)
         return Response(serializer.data)
 
     @staticmethod
@@ -50,23 +58,27 @@ class GroupView(APIView):
     @staticmethod
     def get(request, g_id):
         # https://www.youtube.com/watch?v=b680A5fteEo
-        queryset = get_object_or_404(Group, g_id=g_id)
+        queryset = get_object_or_404(Group, g_id=g_id)  # raise Http404 if not found
         serializer = GroupSerializer(queryset, many=False)
         return Response(serializer.data)
 
     @staticmethod
     def put(request, g_id):
-        serializer = GroupSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.g_id = g_id
-            serializer.save()
-            return Response(status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        obj = Group.objects.get(g_id=g_id)
+        serializer = GroupSerializer(obj, data=request.data, partial=True)
+        serializer.is_valid(raise_exception = True)
+        serializer.save()
+        return Response(status=status.HTTP_200_OK)
+        # if serializer.is_valid():
+        #     serializer.g_id = g_id
+        #     serializer.save()
+        #     return Response(status=status.HTTP_200_OK)
+        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @staticmethod
     def delete(request, g_id):
         Task.objects.filter(g_id=g_id).delete()
-        get_object_or_404(Group, g_id=g_id).delete()
+        get_object_or_404(Group, g_id=g_id).delete()  # raise Http404 if not found
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -74,7 +86,7 @@ class GroupTasksView(APIView):
     @staticmethod
     def get(request, g_id):
         queryset = Task.objects.filter(g_id=g_id).order_by('t_date', 't_id').all()
-        serializer = TaskSerializer(queryset, many=True)
+        serializer = TaskLISerializer(queryset, many=True)
         return Response(serializer.data)
 
     @staticmethod
@@ -103,20 +115,24 @@ class TaskView(APIView):
     @staticmethod
     def get(request, t_id):
         # https://www.youtube.com/watch?v=b680A5fteEo
-        queryset = get_object_or_404(Task, t_id=t_id)
+        queryset = get_object_or_404(Task, t_id=t_id)  # raise Http404 if not found
         serializer = TaskSerializer(queryset, many=False)
         return Response(serializer.data)
 
     @staticmethod
     def put(request, t_id):
-        task = TaskSerializer(data=request.data)
-        if not task.is_valid():
-            return Response(task.errors, status=status.HTTP_400_BAD_REQUEST)
-        task.t_id = t_id
+        # https://stackoverflow.com/questions/69071531/how-to-use-django-serializer-to-update-an-instance
+        obj = Task.objects.get(t_id=t_id)
+        task = TaskSerializer(obj, data=request.data, partial=True)
+        # https://stackoverflow.com/questions/65155286/create-object-with-serializer-django-drf
+        task.is_valid(raise_exception = True)
+        # if not task.is_valid():
+        #     return Response(task.errors, status=status.HTTP_400_BAD_REQUEST)
+        # task.t_id = t_id
         task.save()
         return Response(status=status.HTTP_200_OK)
 
     @staticmethod
     def delete(request, t_id):
-        get_object_or_404(Task, t_id=t_id).delete()
+        get_object_or_404(Task, t_id=t_id).delete()  # raise Http404 if not found
         return Response(status=status.HTTP_204_NO_CONTENT)

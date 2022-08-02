@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/static/styles.css" type="text/css"/>
-    <title>TODO</title>
+    <link rel="icon" href="data:;base64,=">
+    <title>SDM + Django</title>
     <script>
             const JSON_HEADERS = {
                 'Accept': 'application/json',
@@ -27,7 +28,7 @@
                                 td1.appendChild(a);
                                 let td2 = document.createElement("td");
                                 td2.className = "center";
-                                td2.innerHTML = group.tasks_count;
+                                td2.innerHTML = group.g_tasks_count;
                                 row.appendChild(td1);
                                 row.appendChild(td2);
                                 groupsTable.appendChild(row);
@@ -161,6 +162,8 @@
                     if (!isNaN(object["t_priority"])) {
                         object["t_priority"] = parseInt(object["t_priority"]);
                     }
+                    object["t_id"] = t_id
+                    object["g_id"] = g_id
                 });
                 fetch("/task/" + t_id + '/', {method: 'put', headers: JSON_HEADERS, body: json})
                         .then(response => response.status)
@@ -236,7 +239,7 @@
 </head>
 <body>
 
-<h2>Python + Django</h2>
+<h2>SDM + Django</h2>
 
 <input type="hidden" id="curr_g_id">
 <input type="hidden" id="curr_t_id">

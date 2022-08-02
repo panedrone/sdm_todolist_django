@@ -4,7 +4,7 @@
 
     <dto-class name="dj-Group" ref="groups"/>
 
-    <dto-class name="dj-GroupEx" ref="get_groups.sql">
+    <dto-class name="dj-GroupLI" ref="get_groups.sql">
         <field column="g_id" type="|1:, primary_key=True"/>
     </dto-class>
 
