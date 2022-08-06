@@ -1,11 +1,11 @@
 from datetime import datetime
 
-from django.shortcuts import get_object_or_404, get_list_or_404
+from django.shortcuts import get_object_or_404  # , get_list_or_404
 from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from dal.data_store import DataStore
+from dal.data_store import ds
 from dal.group import Group
 from dal.group_li import GroupLI
 from dal.task import Task
@@ -41,7 +41,7 @@ class GroupListView(APIView):
     # https://www.youtube.com/watch?v=b680A5fteEo
     @staticmethod
     def get(request):
-        queryset = DataStore.get_all(GroupLI)  # get_all uses raw-sql, and this sql performs "order by"
+        queryset = ds().get_all(GroupLI)  # get_all uses raw-sql, and this sql performs "order by"
         serializer = GroupLISerializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -66,7 +66,7 @@ class GroupView(APIView):
     def put(request, g_id):
         obj = get_object_or_404(Group, g_id=g_id)
         serializer = GroupSerializer(obj, data=request.data, partial=True)
-        serializer.is_valid(raise_exception = True)
+        serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(status=status.HTTP_200_OK)
         # if serializer.is_valid():
@@ -125,7 +125,7 @@ class TaskView(APIView):
         obj = get_object_or_404(Task, t_id=t_id)
         task = TaskSerializer(obj, data=request.data, partial=True)
         # https://stackoverflow.com/questions/65155286/create-object-with-serializer-django-drf
-        task.is_valid(raise_exception = True)
+        task.is_valid(raise_exception=True)
         # if not task.is_valid():
         #     return Response(task.errors, status=status.HTTP_400_BAD_REQUEST)
         # task.t_id = t_id
