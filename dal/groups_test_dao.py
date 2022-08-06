@@ -4,7 +4,7 @@ http://sqldalmaker.sourceforge.net
 """
 
 from dal.group import Group
-from dal.group_ex import GroupEx
+from dal.group_li import GroupLI
 
 
 class GroupsTestDao:
@@ -77,20 +77,20 @@ class GroupsTestDao:
 
     def get_groups(self):
         """
-        @rtype: list[GroupEx]
+        @rtype: list[GroupLI]
         """
         sql = """select g.*,  
-                (select count(*) from tasks where g_id=g.g_id) as tasks_count 
+                (select count(*) from tasks where g_id=g.g_id) as g_tasks_count 
                 from groups g 
                 order by g.g_id"""
         _res = []
 
         def _map_cb(row):
-            _obj = GroupEx()
+            _obj = GroupLI()
             _obj.g_id = row["g_id"]  # q <- q
             _obj.g_name = row["g_name"]  # q <- q
             _obj.g_comments = row["g_comments"]  # q <- q
-            _obj.tasks_count = row["tasks_count"]  # q <- q
+            _obj.g_tasks_count = row["g_tasks_count"]  # q <- q
             _res.append(_obj)
 
         self.ds.query_all_rows(sql, [], _map_cb)
