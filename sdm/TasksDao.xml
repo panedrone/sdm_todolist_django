@@ -2,8 +2,9 @@
 <dao-class xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:noNamespaceSchemaLocation="dao.xsd">
 
-    <crud dto="dj-Group" table="groups"/>
-
-    <query-dto-list dto="dj-GroupLI" method="get_groups"/>
+    <crud dto="dj-Task" table="tasks">
+        <read/>
+        <delete/>
+    </crud>
 
 </dao-class>

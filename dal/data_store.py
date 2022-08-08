@@ -53,15 +53,15 @@ class DataStore:
 
     def delete_by_filter(self, cls, params=None): pass
 
-    # CRUD
+    # ORM-based CRUD
 
-    def create(self, serializer): pass
+    def create_one(self, serializer): pass
 
     def read_all(self, cls) -> []: pass
 
     def read_one(self, cls, params=None): pass
 
-    def update(self, serializer): pass
+    def update_one(self, serializer): pass
 
     def delete_one(self, cls, params=None): pass
 
@@ -168,7 +168,7 @@ class _DS(DataStore):
 
     # CRUD
 
-    def create(self, serializer):
+    def create_one(self, serializer):
         serializer.save()
 
     def read_all(self, cls) -> []:
@@ -177,7 +177,7 @@ class _DS(DataStore):
     def read_one(self, cls, params=None):
         return cls.objects.get(**params)
 
-    def update(self, serializer):
+    def update_one(self, serializer):
         serializer.save()
 
     def delete_one(self, cls, params=None):

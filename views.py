@@ -8,7 +8,12 @@ from rest_framework.views import APIView
 from dal.data_store import ds
 from dal.group import Group
 from dal.group_li import GroupLI
+from dal.groups_dao import GroupsDao
 from dal.task import Task
+from dal.tasks_dao import TasksDao
+
+dao_g = GroupsDao(ds())
+dao_t = TasksDao(ds())
 
 
 class GroupLISerializer(serializers.HyperlinkedModelSerializer):
@@ -38,7 +43,6 @@ class TaskSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class GroupListView(APIView):
-    # https://www.youtube.com/watch?v=b680A5fteEo
     @staticmethod
     def get(request):
         queryset = ds().get_all_raw(GroupLI)  # get_all uses raw-sql, and this sql performs "order by"
@@ -49,42 +53,29 @@ class GroupListView(APIView):
     def post(request):
         serializer = GroupSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        # serializer.save()
-        ds().create(serializer)
+        ds().create_one(serializer)
         return Response(status=status.HTTP_201_CREATED)
-    # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GroupView(APIView):
     @staticmethod
     def get(request, g_id):
-        # https://www.youtube.com/watch?v=b680A5fteEo
-        # queryset = get_object_or_404(Group, g_id=g_id)  # raise Http404 if not found
-        queryset = ds().read_one(Group, {'g_id': g_id})
+        queryset = dao_g.read_group(g_id)
         serializer = GroupSerializer(queryset, many=False)
         return Response(serializer.data)
 
     @staticmethod
     def put(request, g_id):
-        # obj = get_object_or_404(Group, g_id=g_id)
         queryset = ds().read_one(Group, {'g_id': g_id})
         serializer = GroupSerializer(queryset, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        ds().update_one(serializer)
         return Response(status=status.HTTP_200_OK)
-        # if serializer.is_valid():
-        #     serializer.g_id = g_id
-        #     serializer.save()
-        #     return Response(status=status.HTTP_200_OK)
-        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @staticmethod
     def delete(request, g_id):
-        # Task.objects.filter(g_id=g_id).delete()
-        # ds().filter(Task, {'g_id': g_id}).delete()
         ds().delete_by_filter(Task, {'g_id': g_id})
-        # get_object_or_404(Group, g_id=g_id).delete()  # raise Http404 if not found
-        ds().delete_one(Group, {'g_id': g_id})
+        dao_g.delete_group(g_id)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -92,61 +83,44 @@ class GroupTasksView(APIView):
     @staticmethod
     def get(request, g_id):
         queryset = ds().filter(Task, {'g_id': g_id}).order_by('t_date', 't_id').all()
-        # queryset = Task.objects.filter(g_id=g_id).order_by('t_date', 't_id').all()
         serializer = TaskLISerializer(queryset, many=True)
         return Response(serializer.data)
 
     @staticmethod
     def post(request, g_id):
         task = Task()
-        # task.t_id = -1
         task.g_id = g_id
         now = datetime.now()
-        # task.t_date = now
         dt_string = now.strftime("%Y-%m-%d")
         task.t_date = dt_string
         task.t_priority = 1
         task.t_comments = ''
         # ....................
         sz = TaskSerializer(data=request.data)
-        sz.is_valid()  # to access data
+        sz.is_valid()  # to make data available, no raise_exception=True
         task.t_subject = sz.data['t_subject']
         sz = TaskSerializer(data=task.__dict__, many=False)
-        if not sz.is_valid():
-            return Response(sz.errors, status=status.HTTP_400_BAD_REQUEST)
-        # sz.save()
-        ds().create(sz)
+        sz.is_valid(raise_exception=True)
+        ds().create_one(sz)
         return Response(status=status.HTTP_201_CREATED)
 
 
 class TaskView(APIView):
     @staticmethod
     def get(request, t_id):
-        # https://www.youtube.com/watch?v=b680A5fteEo
-        # queryset = get_object_or_404(Task, t_id=t_id)  # raise Http404 if not found
-        queryset = ds().read_one(Task, {'t_id': t_id})
+        queryset = dao_t.read_task(t_id)
         serializer = TaskSerializer(queryset, many=False)
         return Response(serializer.data)
 
     @staticmethod
     def put(request, t_id):
-        # https://stackoverflow.com/questions/69071531/how-to-use-django-serializer-to-update-an-instance
-        # obj = get_object_or_404(Task, t_id=t_id)
-        queryset = ds().read_one(Task, {'t_id': t_id})
+        queryset = dao_t.read_task(t_id)
         sz = TaskSerializer(queryset, data=request.data, partial=True)
-        # https://stackoverflow.com/questions/65155286/create-object-with-serializer-django-drf
         sz.is_valid(raise_exception=True)
-        # if not task.is_valid():
-        #     return Response(task.errors, status=status.HTTP_400_BAD_REQUEST)
-        # task.t_id = t_id
-        # task.save()
-        ds().update(sz)
+        ds().update_one(sz)
         return Response(status=status.HTTP_200_OK)
 
     @staticmethod
     def delete(request, t_id):
-        # found = Task.objects.filter({'t_id': t_id})
-        # found.delete()
-        # get_object_or_404(Task, t_id=t_id).delete()  # raise Http404 if not found
-        ds().delete_one(Task, {'t_id': t_id})
+        dao_t.delete_task(t_id)
         return Response(status=status.HTTP_204_NO_CONTENT)

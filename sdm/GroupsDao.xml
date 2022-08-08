@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dao-class xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:noNamespaceSchemaLocation="dao.xsd">
+
+    <crud dto="dj-Group" table="groups">
+        <read/>
+        <delete/>
+    </crud>
+
+    <query-dto-list dto="dj-GroupLI" method="get_groups"/>
+
+</dao-class>
