@@ -26,4 +26,4 @@ class TasksDao:
         @type t_id: int
         @rtype: int (the number of affected rows)
         """
-        self.ds.delete_one(Task, {'t_id': t_id})
+        return self.ds.delete_one(Task, {'t_id': t_id})

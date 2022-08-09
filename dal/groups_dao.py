@@ -27,7 +27,7 @@ class GroupsDao:
         @type g_id: int
         @rtype: int (the number of affected rows)
         """
-        self.ds.delete_one(Group, {'g_id': g_id})
+        return self.ds.delete_one(Group, {'g_id': g_id})
 
     def get_groups(self):
         """
