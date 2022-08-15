@@ -1,6 +1,7 @@
 from datetime import datetime
 
 # from django.shortcuts import get_object_or_404  # , get_list_or_404
+from django.http import HttpResponse
 from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -16,16 +17,20 @@ dao_g = GroupsDao(ds())
 dao_t = TasksDao(ds())
 
 
-class GroupLISerializer(serializers.HyperlinkedModelSerializer):
+class GroupLISerializer(serializers.ModelSerializer):
     class Meta:
         model = GroupLI
-        fields = ['g_id', 'g_name', 'g_tasks_count']
+        fields = '__all__'  # '__all__' cannot be used with HyperlinkedModelSerializer
 
 
-class GroupSerializer(serializers.HyperlinkedModelSerializer):
+class GroupSerializer(serializers.ModelSerializer):  # HyperlinkedModelSerializer
+
+    g_id = serializers.IntegerField(required=False, allow_null=True)  # for a new one
+    g_name = serializers.CharField(required=True, max_length=256)
+
     class Meta:
         model = Group
-        fields = ['g_id', 'g_name']
+        fields = '__all__'
 
 
 # list item without comments:
@@ -36,16 +41,33 @@ class TaskLISerializer(serializers.HyperlinkedModelSerializer):
         fields = ['t_id', 'g_id', 't_priority', 't_date', 't_subject']
 
 
-class TaskSerializer(serializers.HyperlinkedModelSerializer):
+class NewTaskSerializer(serializers.ModelSerializer):  # HyperlinkedModelSerializer
+
+    t_subject = serializers.CharField(required=True, max_length=256)
+
     class Meta:
         model = Task
-        fields = ['t_id', 'g_id', 't_priority', 't_date', 't_subject', 't_comments']
+        fields = ['t_subject']
+
+
+class TaskSerializer(serializers.ModelSerializer):  # HyperlinkedModelSerializer
+
+    t_id = serializers.IntegerField(required=True)
+    g_id = serializers.IntegerField(required=True)
+    t_priority = serializers.IntegerField(required=True)
+    t_date = serializers.DateField(required=True)
+    t_subject = serializers.CharField(required=True, max_length=256)
+    t_comments = serializers.CharField(required=False, allow_blank=True)
+
+    class Meta:
+        model = Task
+        fields = '__all__'
 
 
 class GroupListView(APIView):
     @staticmethod
     def get(request):
-        queryset = ds().get_all_raw(GroupLI)  # get_all uses raw-sql, and this sql performs "order by"
+        queryset = ds().get_all_raw(GroupLI)
         serializer = GroupLISerializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -53,8 +75,8 @@ class GroupListView(APIView):
     def post(request):
         serializer = GroupSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        ds().create_one(serializer)
-        return Response(status=status.HTTP_201_CREATED)
+        serializer.save()
+        return HttpResponse(status=status.HTTP_201_CREATED)
 
 
 class GroupView(APIView):
@@ -70,13 +92,13 @@ class GroupView(APIView):
         serializer = GroupSerializer(queryset, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         ds().update_one(serializer)
-        return Response(status=status.HTTP_200_OK)
+        return HttpResponse(status=status.HTTP_200_OK)
 
     @staticmethod
     def delete(request, g_id):
         ds().delete_by_filter(Task, {'g_id': g_id})
         dao_g.delete_group(g_id)
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
 
 class GroupTasksView(APIView):
@@ -88,21 +110,17 @@ class GroupTasksView(APIView):
 
     @staticmethod
     def post(request, g_id):
-        task = Task()
+        sz = NewTaskSerializer(data=request.data)
+        sz.is_valid(raise_exception=True)  # to make validated_data available
+        task = Task(**sz.validated_data)
         task.g_id = g_id
         now = datetime.now()
         dt_string = now.strftime("%Y-%m-%d")
         task.t_date = dt_string
         task.t_priority = 1
         task.t_comments = ''
-        # ....................
-        sz = TaskSerializer(data=request.data)
-        sz.is_valid()  # to make data available, no raise_exception=True
-        task.t_subject = sz.data['t_subject']
-        sz = TaskSerializer(data=task.__dict__, many=False)
-        sz.is_valid(raise_exception=True)
-        ds().create_one(sz)
-        return Response(status=status.HTTP_201_CREATED)
+        task.save()
+        return HttpResponse(status=status.HTTP_201_CREATED)
 
 
 class TaskView(APIView):
@@ -114,13 +132,12 @@ class TaskView(APIView):
 
     @staticmethod
     def put(request, t_id):
-        queryset = dao_t.read_task(t_id)
-        sz = TaskSerializer(queryset, data=request.data, partial=True)
+        sz = TaskSerializer(data=request.data)
         sz.is_valid(raise_exception=True)
         ds().update_one(sz)
-        return Response(status=status.HTTP_200_OK)
+        return HttpResponse(status=status.HTTP_200_OK)
 
     @staticmethod
     def delete(request, t_id):
         dao_t.delete_task(t_id)
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
