@@ -34,6 +34,9 @@
 
         <type detected="dj-java.lang.Object" target="${dj-type}|0:CharField|1:, max_length=256"/>
 
+        <type detected="dj-java.lang.Integer+autoincrement" target="${dj-type}|0:AutoField"/>
+        <type detected="dj-java.lang.Integer+auto" target="${dj-type}|0:AutoField"/>
+
         <type detected="dj-int" target="${dj-type}|0:IntegerField"/>
         <type detected="dj-long" target="${dj-type}|0:BigIntegerField"/>
 

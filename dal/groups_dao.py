@@ -43,7 +43,6 @@ class GroupsDao:
             _obj = GroupLI()
             _obj.g_id = row["g_id"]  # q <- q
             _obj.g_name = row["g_name"]  # q <- q
-            _obj.g_comments = row["g_comments"]  # q <- q
             _obj.g_tasks_count = row["g_tasks_count"]  # q <- q
             _res.append(_obj)
 
