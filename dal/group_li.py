@@ -7,7 +7,7 @@ from django.db import models
 
 
 class GroupLI(models.Model):
-    g_id = models.AutoField(db_column='g_id', primary_key=True)
+    g_id = models.AutoField(db_column='g_id', primary_key=True, max_length=256)
     g_name = models.CharField(db_column='g_name', max_length=256)
     g_tasks_count = models.CharField(db_column='g_tasks_count', max_length=256)
 

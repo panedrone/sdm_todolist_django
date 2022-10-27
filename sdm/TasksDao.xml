@@ -3,6 +3,7 @@
            xsi:noNamespaceSchemaLocation="dao.xsd">
 
     <crud dto="dj-Task" table="tasks">
+        <create/>
         <read/>
         <delete/>
     </crud>

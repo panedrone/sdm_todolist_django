@@ -128,7 +128,8 @@ class TaskView(APIView):
     def get(request, t_id):
         queryset = dao_t.read_task(t_id)
         serializer = TaskSerializer(queryset, many=False)
-        return Response(serializer.data)
+        resp = Response(serializer.data)
+        return resp
 
     @staticmethod
     def put(request, t_id):

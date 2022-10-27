@@ -11,6 +11,16 @@ class TasksDao:
     def __init__(self, ds):
         self.ds = ds
 
+    def create_task(self, p):
+        """
+        (C)RUD: tasks
+        Generated values are passed to DTO.
+        @type p: Task
+        @rtype: None
+        @raise: Exception if no rows inserted.
+        """
+        self.ds.create_one(p)
+
     def read_task(self, t_id):
         """
         C(R)UD: tasks

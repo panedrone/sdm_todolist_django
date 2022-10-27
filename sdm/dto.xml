@@ -4,9 +4,7 @@
 
     <dto-class name="dj-Group" ref="groups" auto="g_id:autoincrement"/>
 
-    <dto-class name="dj-GroupLI" ref="get_groups.sql">
-        <field column="g_id" type="|1:, primary_key=True"/>
-    </dto-class>
+    <dto-class name="dj-GroupLI" ref="get_groups.sql" pk="g_id"/>
 
     <dto-class name="dj-Task" ref="tasks" auto="t_id"/>
 
