@@ -23,6 +23,14 @@ class GroupLISerializer(serializers.ModelSerializer):
         fields = '__all__'  # '__all__' cannot be used with HyperlinkedModelSerializer
 
 
+class NewGroupSerializer(serializers.ModelSerializer):
+    g_name = serializers.CharField(required=True, max_length=256)
+
+    class Meta:
+        model = Group
+        fields = '__all__'
+
+
 class GroupSerializer(serializers.ModelSerializer):  # HyperlinkedModelSerializer
 
     g_id = serializers.IntegerField(required=False, allow_null=True)  # for a new one
@@ -73,7 +81,7 @@ class GroupListView(APIView):
 
     @staticmethod
     def post(request):
-        serializer = GroupSerializer(data=request.data)
+        serializer = NewGroupSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return HttpResponse(status=status.HTTP_201_CREATED)
