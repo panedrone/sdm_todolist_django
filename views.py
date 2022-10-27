@@ -88,7 +88,8 @@ class GroupView(APIView):
 
     @staticmethod
     def put(request, g_id):
-        queryset = ds().read_one(Group, {'g_id': g_id})
+        queryset = dao_g.read_group(g_id)
+        # queryset = ds().read_one(Group, {'g_id': g_id})
         serializer = GroupSerializer(queryset, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         ds().update_one(serializer)
@@ -133,7 +134,10 @@ class TaskView(APIView):
 
     @staticmethod
     def put(request, t_id):
-        sz = TaskSerializer(data=request.data)
+        # request.data['t_id'] = t_id
+        # sz = TaskSerializer(data=request.data)
+        queryset = dao_t.read_task(t_id)  # failed to save without queryset (errors)
+        sz = TaskSerializer(queryset, data=request.data)
         sz.is_valid(raise_exception=True)
         ds().update_one(sz)
         return HttpResponse(status=status.HTTP_200_OK)
