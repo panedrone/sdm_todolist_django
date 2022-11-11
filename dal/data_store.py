@@ -1,11 +1,32 @@
+"""
+    SQL DAL Maker Website: http://sqldalmaker.sourceforge.net
+    This is an example of how to implement DataStore in Python + sqlite3/psycopg2/mysql/django.db -->
+    Executing custom SQL directly https://docs.djangoproject.com/en/3.2/topics/db/sql/
+    Recent version: https://github.com/panedrone/sqldalmaker/blob/master/src/resources/data_store.py
+
+    Copy-paste this code to your project and change it for your needs.
+
+    Successfully tested in django projects:
+    - 'django.db.backends.sqlite3' ---------------- built-in
+    - 'django.db.backends.postgresql_psycopg2' ---- pip install psycopg2
+    - 'mysql.connector.django' -------------------- pip install mysql-connector-python
+       ^^ instead of built-in 'django.db.backends.mysql' to enable cursor.stored_results().
+       MySQL SP returning result-sets --> http://www.mysqltutorial.org/calling-mysql-stored-procedures-python/
+       MySQL Connector/Python as Django Engine? -->
+       https://stackoverflow.com/questions/26573984/django-how-to-install-mysql-connector-python-with-pip3)
+    - 'django.db.backends.oracle' ------------------pip install cx_oracle
+
+    Improvements are welcome: sqldalmaker@gmail.com
+"""
+
 # uncomment one of the imports below to use without django.db
 
 # import sqlite3
 # import psycopg2
 # import mysql.connector
+# import cx_oracle
 
-# uncomment the code below to use with django.db:
-import os
+# uncomment the imports and code below to use with django.db:
 
 import django.db
 from django.apps import AppConfig
@@ -14,18 +35,18 @@ from django.db.backends.base.base import BaseDatabaseWrapper
 
 
 class MyDjangoAppConfig(AppConfig):
-    # default_auto_field = 'django.db.models.BigAutoField'
-    default_auto_field = 'django.db.models.AutoField'
+    default_auto_field = 'django.db.models.BigAutoField'
+    # default_auto_field = 'django.db.models.AutoField'
     name = 'dal'  # python package containing generated django models
 
 
-# there should be "settings.py" in the project root
-# Google --> django settings.py location
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings')
+# # there should be "settings.py" in the project root
+# # Google --> django settings.py location
+# os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings')
 
 # django.setup() should be called before importing/using generated django models -->
 # AppRegistryNotReady("Apps aren't loaded yet.")
-django.setup()
+# django.setup()
 
 
 class OutParam:
@@ -80,28 +101,16 @@ class DataStore:
     def query_all_rows(self, sql, params, callback) -> []: pass
 
 
-class _DS(DataStore):
-    """
-        SQL DAL Maker Website: http://sqldalmaker.sourceforge.net
-        This is an example of how to implement DataStore in Python + sqlite3/psycopg2/mysql/django.db -->
-        Executing custom SQL directly https://docs.djangoproject.com/en/3.2/topics/db/sql/
-        Recent version: https://github.com/panedrone/sqldalmaker/blob/master/src/resources/data_store.py
-        Copy-paste this code to your project and change it for your needs.
-        Improvements are welcome: sqldalmaker@gmail.com
-        Successfully tested in django projects:
-        - 'django.db.backends.sqlite3' ---------------- built-in
-        - 'django.db.backends.postgresql_psycopg2' ---- pip install psycopg2
-        - 'mysql.connector.django' -------------------- pip install mysql-connector-python
-           ^^ instead of built-in 'django.db.backends.mysql' to enable cursor.stored_results().
-           MySQL SP returning result-sets --> http://www.mysqltutorial.org/calling-mysql-stored-procedures-python/
-           MySQL Connector/Python as Django Engine? -->
-           https://stackoverflow.com/questions/26573984/django-how-to-install-mysql-connector-python-with-pip3)
-    """
+def create_ds() -> DataStore:
+    return _DS()
 
+
+class _DS(DataStore):
     class EngineType:
         sqlite3 = 1
         mysql = 2
         postgresql = 3
+        oracle = 4
 
     def __init__(self):
         self.conn = None
@@ -132,6 +141,8 @@ class _DS(DataStore):
             self.engine_type = self.EngineType.mysql
         elif 'postgresql' in engine:
             self.engine_type = self.EngineType.postgresql
+        elif 'oracle' in engine:
+            self.engine_type = self.EngineType.oracle
         else:
             raise Exception('Unexpected: ' + engine)
         self.conn = con
@@ -165,7 +176,7 @@ class _DS(DataStore):
 
     def delete_by_filter(self, cls, params=None) -> int:
         queryset = self.filter(cls, params)
-        res_tuple = queryset.delete() # (1, {'dal.Group': 1})
+        res_tuple = queryset.delete()  # (1, {'dal.Group': 1})
         return res_tuple[0]
 
     # CRUD
@@ -185,7 +196,7 @@ class _DS(DataStore):
     def delete_one(self, cls, params=None) -> int:
         # queryset = self.read_one(cls, params) # it returns an entity -> fetching
         # queryset.delete()
-        rc = self.delete_by_filter(cls, params) # no fetch!
+        rc = self.delete_by_filter(cls, params)  # no fetch!
         return rc
 
     # uncomment to use without django.db:
@@ -473,10 +484,3 @@ class _DS(DataStore):
         for i in range(len(params)):
             if isinstance(params[i], OutParam):
                 params[i].value = result_args[i]
-
-
-_ds = _DS()
-
-
-def ds() -> DataStore:
-    return _ds
