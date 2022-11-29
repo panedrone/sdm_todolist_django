@@ -1,6 +1,6 @@
 """
     This file is a part of SQL DAL Maker project: https://sqldalmaker.sourceforge.net
-    It demonstrates how to implement interface in Python + sqlite3|psycopg2|mysql|django.db
+    It demonstrates how to implement interface DataStore in Python + sqlite3|psycopg2|mysql|django.db
     Executing custom SQL directly https://docs.djangoproject.com/en/3.2/topics/db/sql/
     Recent version: https://github.com/panedrone/sqldalmaker/blob/master/src/resources/data_store.py
 
