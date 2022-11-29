@@ -10,7 +10,7 @@
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/venv" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.9 (1.268_demo_django_todolist_sqlite3)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.9 (todolist_django_sqlite3)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Python 3.8 (django_todolist_sqlite3) interpreter library" level="application" />
   </component>
