@@ -1,22 +1,22 @@
 """
-    This file is a part of SQL DAL Maker project: https://sqldalmaker.sourceforge.net
-    It demonstrates how to implement interface DataStore in Python + sqlite3|psycopg2|mysql|django.db
-    Executing custom SQL directly https://docs.djangoproject.com/en/3.2/topics/db/sql/
-    Recent version: https://github.com/panedrone/sqldalmaker/blob/master/src/resources/data_store.py
+        This file is a part of SQL DAL Maker project: https://sqldalmaker.sourceforge.net
+        It demonstrates how to implement interface DataStore in Python + sqlite3|psycopg2|mysql|cx_oracle|django.db.
+        More about DataStore: https://sqldalmaker.sourceforge.net/data_store.html
+        Recent version: https://github.com/panedrone/sqldalmaker/blob/master/src/resources/data_store.py
 
-    Successfully tested in django projects:
+        Successfully tested in django projects:
 
-    - 'django.db.backends.sqlite3' ---------------- built-in
-    - 'django.db.backends.postgresql_psycopg2' ---- pip install psycopg2
-    - 'mysql.connector.django' -------------------- pip install mysql-connector-python
-       ^^ instead of built-in 'django.db.backends.mysql' to enable cursor.stored_results().
-       MySQL SP returning result-sets --> http://www.mysqltutorial.org/calling-mysql-stored-procedures-python/
-       MySQL Connector/Python as Django Engine? -->
-       https://stackoverflow.com/questions/26573984/django-how-to-install-mysql-connector-python-with-pip3)
-    - 'django.db.backends.oracle' ------------------pip install cx_oracle
+        - 'django.db.backends.sqlite3' ---------------- built-in
+        - 'django.db.backends.postgresql_psycopg2' ---- pip install psycopg2
+        - 'mysql.connector.django' -------------------- pip install mysql-connector-python
+           ^^ instead of built-in 'django.db.backends.mysql' to enable cursor.stored_results().
+           MySQL SP returning result-sets --> http://www.mysqltutorial.org/calling-mysql-stored-procedures-python/
+           MySQL Connector/Python as Django Engine? -->
+           https://stackoverflow.com/questions/26573984/django-how-to-install-mysql-connector-python-with-pip3)
+        - 'django.db.backends.oracle' ------------------pip install cx_oracle
 
-    Copy-paste this code to your project and change it for your needs.
-    Improvements are welcome: sqldalmaker@gmail.com
+        Copy-paste this code to your project and change it for your needs.
+        Improvements are welcome: sqldalmaker@gmail.com
 """
 
 # uncomment one of the imports below for projects without django.db

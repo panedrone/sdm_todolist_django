@@ -28,12 +28,12 @@ class GroupLISerializer(serializers.ModelSerializer):
         fields = '__all__'  # '__all__' cannot be used with HyperlinkedModelSerializer
 
 
-class NewGroupSerializer(serializers.ModelSerializer):
+class GroupEditSerializer(serializers.ModelSerializer):
     g_name = serializers.CharField(required=True, max_length=256)
 
     class Meta:
         model = Group
-        fields = '__all__'
+        fields = ['g_name']
 
 
 class GroupSerializer(serializers.ModelSerializer):  # HyperlinkedModelSerializer
@@ -86,7 +86,7 @@ class GroupListView(APIView):
 
     @staticmethod
     def post(request):
-        serializer = NewGroupSerializer(data=request.data)
+        serializer = GroupEditSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return HttpResponse(status=status.HTTP_201_CREATED)
@@ -101,11 +101,9 @@ class GroupView(APIView):
 
     @staticmethod
     def put(request, g_id):
-        queryset = dao_g.read_group(g_id)
-        # queryset = ds().read_one(Group, {'g_id': g_id})
-        serializer = GroupSerializer(queryset, data=request.data, partial=True)
+        serializer = GroupEditSerializer(data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
-        _ds.update_one(serializer)
+        GroupsDao(_ds).rename(g_id, serializer.data['g_name'])
         return HttpResponse(status=status.HTTP_200_OK)
 
     @staticmethod
@@ -147,12 +145,9 @@ class TaskView(APIView):
 
     @staticmethod
     def put(request, t_id):
-        # request.data['t_id'] = t_id
-        # sz = TaskSerializer(data=request.data)
-        queryset = dao_t.read_task(t_id)  # failed to save without queryset (errors)
-        sz = TaskSerializer(queryset, data=request.data)
+        sz = TaskSerializer(data=request.data)
         sz.is_valid(raise_exception=True)
-        _ds.update_one(sz)
+        TasksDao(_ds).update_task(t_id, sz.data)
         return HttpResponse(status=status.HTTP_200_OK)
 
     @staticmethod
