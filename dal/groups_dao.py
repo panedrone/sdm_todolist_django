@@ -1,3 +1,8 @@
+"""
+
+My hand-coded extension of generated class
+
+"""
 from typing import List
 
 from dal._groups_dao import _GroupsDao

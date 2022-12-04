@@ -1,32 +1,33 @@
 """
-        This file is a part of SQL DAL Maker project: https://sqldalmaker.sourceforge.net
-        It demonstrates how to implement interface DataStore in Python + sqlite3|psycopg2|mysql|cx_oracle|django.db.
-        More about DataStore: https://sqldalmaker.sourceforge.net/data_store.html
-        Recent version: https://github.com/panedrone/sqldalmaker/blob/master/src/resources/data_store.py
+    This file is a part of SQL DAL Maker project: https://sqldalmaker.sourceforge.net
+    It demonstrates how to implement an interface DataStore in Python + sqlite3|psycopg2|mysql|cx_oracle|django.db.
+    More about DataStore: https://sqldalmaker.sourceforge.net/data_store.html
+    Recent version: https://github.com/panedrone/sqldalmaker/blob/master/src/resources/data_store.py
 
-        Successfully tested in django projects:
+    Successfully tested with both "no-django" and django.db:
 
-        - 'django.db.backends.sqlite3' ---------------- built-in
-        - 'django.db.backends.postgresql_psycopg2' ---- pip install psycopg2
-        - 'mysql.connector.django' -------------------- pip install mysql-connector-python
-           ^^ instead of built-in 'django.db.backends.mysql' to enable cursor.stored_results().
-           MySQL SP returning result-sets --> http://www.mysqltutorial.org/calling-mysql-stored-procedures-python/
-           MySQL Connector/Python as Django Engine? -->
-           https://stackoverflow.com/questions/26573984/django-how-to-install-mysql-connector-python-with-pip3)
-        - 'django.db.backends.oracle' ------------------pip install cx_oracle
+    - 'django.db.backends.sqlite3' ---------------- built-in
+    - 'django.db.backends.postgresql_psycopg2' ---- pip install psycopg2
+    - 'mysql.connector.django' -------------------- pip install mysql-connector-python
+       ^^ instead of built-in 'django.db.backends.mysql' to enable cursor.stored_results().
+       MySQL SP returning result-sets --> http://www.mysqltutorial.org/calling-mysql-stored-procedures-python/
+       MySQL Connector/Python as Django Engine? -->
+       https://stackoverflow.com/questions/26573984/django-how-to-install-mysql-connector-python-with-pip3)
+    - 'django.db.backends.oracle' ------------------pip install cx_oracle
 
-        Copy-paste this code to your project and change it for your needs.
-        Improvements are welcome: sqldalmaker@gmail.com
+    Copy-paste this code to your project and change it for your needs.
+    Improvements are welcome: sqldalmaker@gmail.com
+
 """
 
-# uncomment one of the imports below for projects without django.db
+# uncomment one of the imports below for "no-django"
 
 # import sqlite3
 # import psycopg2
 # import mysql.connector
 # import cx_oracle
 
-# uncomment the imports and code below for projects using django.db:
+# uncomment the imports and code below while using django.db:
 
 import django.db
 from django.apps import AppConfig
@@ -126,7 +127,7 @@ class DataStore:
     def read_one(self, cls, pk: dict):
         """
         :param cls: a model class
-        :param pk: dict of primary key columns
+        :param pk: primary key as a dict of column-value pairs
         :return: a model object
         """
         pass
@@ -135,16 +136,16 @@ class DataStore:
         """
         :param cls: model class
         :param data: dict of column-value to update
-        :param pk: dict of primary key columns
-        :return: amount of rows affected
+        :param pk: primary key as a dict of column-value pairs
+        :return: int, amount of rows affected
         """
         pass
 
     def delete_one(self, cls, pk: dict) -> int:
         """
         :param cls: model class
-        :param pk: dict of primary key columns
-        :return: amount of rows affected
+        :param pk: primary key as a dict of column-value pairs
+        :return: int, amount of rows affected
         """
         pass
 
@@ -153,8 +154,8 @@ class DataStore:
     def insert_row(self, sql, params, ai_values):
         """
         :param sql: str
-        :param params: array, optional, values of SQL parameters
-        :param ai_values: array, optional, an array like [["o_id", 1], ...] for auto-increment values
+        :param params: array, values of SQL parameters
+        :param ai_values: an array like [["o_id", 1], ...] to specify and obtain auto-incremented values
         :return: None
         :raise Exception if no rows inserted.
         """
@@ -163,15 +164,15 @@ class DataStore:
     def exec_dml(self, sql, params):
         """
         :param sql: str
-        :param params: array, optional, values of SQL parameters
-        :return: int, amount of affected rows
+        :param params: array, values of SQL parameters
+        :return: int, amount of rows affected
         """
         pass
 
     def query_scalar(self, sql, params):
         """
         :param sql: str
-        :param params: array, optional, values of SQL parameters
+        :param params: array, values of SQL parameters
         :return single scalar value
         :raise Exception if amount of fetched rows != 1
         """
@@ -180,7 +181,7 @@ class DataStore:
     def query_all_scalars(self, sql, params) -> []:
         """
         :param sql: str
-        :param params: array, optional, values of SQL parameters
+        :param params: array, values of SQL parameters
         :return array of scalar values
         """
         pass
@@ -188,7 +189,7 @@ class DataStore:
     def query_row(self, sql, params):
         """
         :param sql: str
-        :param params: array, optional, values of SQL parameters
+        :param params: array, values of SQL parameters
         :return single fetched row
         :raise Exception if amount of rows != 1
         """
@@ -197,7 +198,7 @@ class DataStore:
     def query_all_rows(self, sql, params, callback):
         """
         :param sql: str
-        :param params: array, optional, values of SQL parameters.
+        :param params: array, values of SQL parameters.
         :param callback: а function delivering fetched rows to caller
         :return: None
         """
