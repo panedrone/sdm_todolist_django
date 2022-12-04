@@ -5,6 +5,7 @@
     <crud dto="dj-Task" table="tasks">
         <create/>
         <read/>
+        <update/>
         <delete/>
     </crud>
 

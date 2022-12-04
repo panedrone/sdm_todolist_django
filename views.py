@@ -79,35 +79,35 @@ class TaskSerializer(serializers.ModelSerializer):  # HyperlinkedModelSerializer
 
 class GroupListView(APIView):
     @staticmethod
-    def get(request):
-        queryset = _ds.get_all_raw(GroupLI)
-        serializer = GroupLISerializer(queryset, many=True)
-        return Response(serializer.data)
+    def get(_):
+        groups = dao_g.get_all_groups()
+        sz = GroupLISerializer(groups, many=True)
+        return Response(sz.data)
 
     @staticmethod
     def post(request):
-        serializer = GroupEditSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
+        sz = GroupEditSerializer(data=request.data)
+        sz.is_valid(raise_exception=True)
+        dao_g.create_group(sz)
         return HttpResponse(status=status.HTTP_201_CREATED)
 
 
 class GroupView(APIView):
     @staticmethod
-    def get(request, g_id):
-        queryset = dao_g.read_group(g_id)
-        serializer = GroupSerializer(queryset, many=False)
-        return Response(serializer.data)
+    def get(_, g_id):
+        gr = dao_g.read_group(g_id)
+        sz = GroupSerializer(gr, many=False)
+        return Response(sz.data)
 
     @staticmethod
     def put(request, g_id):
-        serializer = GroupEditSerializer(data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        GroupsDao(_ds).rename(g_id, serializer.data['g_name'])
+        sz = GroupEditSerializer(data=request.data, partial=True)
+        sz.is_valid(raise_exception=True)
+        dao_g.update_group(g_id, sz.data)
         return HttpResponse(status=status.HTTP_200_OK)
 
     @staticmethod
-    def delete(request, g_id):
+    def delete(_, g_id):
         _ds.delete_by_filter(Task, {'g_id': g_id})
         dao_g.delete_group(g_id)
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
@@ -115,10 +115,10 @@ class GroupView(APIView):
 
 class GroupTasksView(APIView):
     @staticmethod
-    def get(request, g_id):
-        queryset = _ds.filter(Task, {'g_id': g_id}).order_by('t_date', 't_id').all()
-        serializer = TaskLISerializer(queryset, many=True)
-        return Response(serializer.data)
+    def get(_, g_id):
+        queryset = dao_t.get_by_group(g_id)
+        sz = TaskLISerializer(queryset, many=True)
+        return Response(sz.data)
 
     @staticmethod
     def post(request, g_id):
@@ -131,26 +131,26 @@ class GroupTasksView(APIView):
         task.t_date = dt_string
         task.t_priority = 1
         task.t_comments = ''
-        task.save()
+        dao_t.create_task(task)
         return HttpResponse(status=status.HTTP_201_CREATED)
 
 
 class TaskView(APIView):
     @staticmethod
-    def get(request, t_id):
-        queryset = dao_t.read_task(t_id)
-        serializer = TaskSerializer(queryset, many=False)
-        resp = Response(serializer.data)
+    def get(_, t_id):
+        t = dao_t.read_task(t_id)
+        sz = TaskSerializer(t, many=False)
+        resp = Response(sz.data)
         return resp
 
     @staticmethod
     def put(request, t_id):
         sz = TaskSerializer(data=request.data)
         sz.is_valid(raise_exception=True)
-        TasksDao(_ds).update_task(t_id, sz.data)
+        dao_t.update_task(t_id, sz.data)
         return HttpResponse(status=status.HTTP_200_OK)
 
     @staticmethod
-    def delete(request, t_id):
+    def delete(_, t_id):
         dao_t.delete_task(t_id)
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)

@@ -11,5 +11,5 @@ class TasksDao(_TasksDao):
     def __init__(self, ds):
         super().__init__(ds)
 
-    def update_task(self, t_id: int, data: dict):
-        self.ds.filter(Task, {'t_id': t_id}).update(**data)  # TODO implement it in _DS
+    def get_by_group(self, g_id: int):
+        return self.ds.filter(Task, {'g_id': g_id}).order_by('t_date', 't_id').all()

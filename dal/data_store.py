@@ -64,27 +64,89 @@ class DataStore:
 
     # ORM-based raw-SQL helpers
 
-    def get_one_raw(self, cls, params=None): pass
+    def get_one_raw(self, cls, params=None):
+        """
+        :param cls: a model class containing static field SQL
+        :param params: a tuple of SQL params
+        :return: a model object
+        """
+        pass
 
-    def get_all_raw(self, cls, params=None) -> []: pass
+    def get_all_raw(self, cls, params=None) -> []:
+        """
+        :param cls: a model class containing static field SQL
+        :param params: a tuple of SQL params
+        :return: an array of model objects
+        """
+        pass
 
     # ORM-based helpers
 
-    def filter(self, cls, params=None): pass
+    def filter(self, cls, params: dict):
+        """
+        :param cls: a model class
+        :param params: dict of named filter params
+        :return: a QuerySet
+        """
+        pass
 
-    def delete_by_filter(self, cls, params=None) -> int: pass
+    def delete_by_filter(self, cls, params: dict) -> int:
+        """
+        :param cls: a model class
+        :param params: dict of named filter params
+        :return: amount of rows affected
+        """
+        pass
+
+    def update_by_filter(self, cls, data: dict, params: dict) -> int:
+        """
+        :param cls: a model class
+        :param data: dict of column-value to update
+        :param params: dict of filter params
+        :return: amount of rows affected
+        """
+        pass
 
     # ORM-based CRUD methods
 
-    def create_one(self, serializer): pass
+    def create_one(self, obj):
+        """
+        :param obj: a model object or serializer object
+        :return: None
+        """
+        pass
 
-    def read_all(self, cls) -> []: pass
+    def read_all(self, cls):
+        """
+        :param cls: a model class
+        :return: a QuerySet
+        """
+        pass
 
-    def read_one(self, cls, params=None): pass
+    def read_one(self, cls, pk: dict):
+        """
+        :param cls: a model class
+        :param pk: dict of primary key columns
+        :return: a model object
+        """
+        pass
 
-    def update_one(self, serializer): pass
+    def update_one(self, cls, data: dict, pk: dict) -> int:
+        """
+        :param cls: model class
+        :param data: dict of column-value to update
+        :param pk: dict of primary key columns
+        :return: amount of rows affected
+        """
+        pass
 
-    def delete_one(self, cls, params=None) -> int: pass
+    def delete_one(self, cls, pk: dict) -> int:
+        """
+        :param cls: model class
+        :param pk: dict of primary key columns
+        :return: amount of rows affected
+        """
+        pass
 
     # Raw-SQL methods
 
@@ -212,32 +274,35 @@ class _DS(DataStore):
 
     # ORM-based helpers
 
-    def filter(self, cls, params=None):
+    def filter(self, cls, params: dict):
         return cls.objects.filter(**params)
 
-    def delete_by_filter(self, cls, params=None) -> int:
+    def delete_by_filter(self, cls, params: dict) -> int:
         queryset = self.filter(cls, params)
         res_tuple = queryset.delete()  # (1, {'dal.Group': 1})
         return res_tuple[0]
 
+    def update_by_filter(self, cls, data: dict, params: dict) -> int:
+        queryset = self.filter(cls, params)
+        rows_affected = queryset.update(**data)
+        return rows_affected
+
     # ORM-based CRUD methods
 
-    def create_one(self, serializer):
-        serializer.save()
+    def create_one(self, obj):
+        obj.save()
 
-    def read_all(self, cls) -> []:
+    def read_all(self, cls):
         return cls.objects.all()
 
-    def read_one(self, cls, params=None):
-        return cls.objects.get(**params)
+    def read_one(self, cls, pk: dict):
+        return cls.objects.get(**pk)
 
-    def update_one(self, serializer):
-        serializer.save()
+    def update_one(self, cls, data: dict, pk: dict) -> int:
+        return self.update_by_filter(cls, data, pk)  # no fetch!
 
-    def delete_one(self, cls, params=None) -> int:
-        # queryset = self.read_one(cls, params) # it returns an entity -> fetching
-        # queryset.delete()
-        rc = self.delete_by_filter(cls, params)  # no fetch!
+    def delete_one(self, cls, pk: dict) -> int:
+        rc = self.delete_by_filter(cls, pk)  # no fetch!
         return rc
 
     # uncomment to use without django.db:
