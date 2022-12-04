@@ -15,7 +15,7 @@
        https://stackoverflow.com/questions/26573984/django-how-to-install-mysql-connector-python-with-pip3)
     - 'django.db.backends.oracle' ------------------pip install cx_oracle
 
-    Copy-paste this code to your project and change it for your needs.
+    Copy-paste it to your project and change it for your needs.
     Improvements are welcome: sqldalmaker@gmail.com
 
 """
@@ -110,7 +110,7 @@ class DataStore:
 
     # ORM-based CRUD methods
 
-    def create_one(self, obj):
+    def create_one(self, obj) -> None:
         """
         :param obj: a model object or serializer object
         :return: None
@@ -276,14 +276,21 @@ class _DS(DataStore):
     # ORM-based helpers
 
     def filter(self, cls, params: dict):
+        # Django Filter Model by Dictionary
+        # https://stackoverflow.com/questions/16018497/django-filter-model-by-dictionary
         return cls.objects.filter(**params)
 
     def delete_by_filter(self, cls, params: dict) -> int:
+        # Entry.objects.filter(blog=b).delete()
+        # https://docs.djangoproject.com/en/4.1/ref/models/querysets/
         queryset = self.filter(cls, params)
         res_tuple = queryset.delete()  # (1, {'dal.Group': 1})
         return res_tuple[0]
 
     def update_by_filter(self, cls, data: dict, params: dict) -> int:
+        # call update(), rather than loading the model object into memory.
+        # Entry.objects.filter(id=10).update(comments_on=False)
+        # https://docs.djangoproject.com/en/4.1/ref/models/querysets/
         queryset = self.filter(cls, params)
         rows_affected = queryset.update(**data)
         return rows_affected
