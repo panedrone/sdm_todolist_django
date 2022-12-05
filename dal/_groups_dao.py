@@ -17,8 +17,8 @@ class _GroupsDao:
         (C)RUD: groups
         Generated values are passed to DTO.
         :param p: Group
-        :returns: None
-        :raises: Exception if no rows inserted.
+        :return: None
+        :raises Exception: if no rows inserted.
         """
         self.ds.create_one(p)
 
@@ -26,8 +26,8 @@ class _GroupsDao:
         """
         C(R)UD: groups
         :param g_id: int
-        :returns: Group
-        :raises: Exception if amount of returned rows != 1.
+        :return: Group
+        :raises Exception: if amount of returned rows != 1.
         """
         return self.ds.read_one(Group, {'g_id': g_id})
 
@@ -35,8 +35,8 @@ class _GroupsDao:
         """
         CR(U)D: groups
         :param g_id: int
-        :param data: dict
-        :returns: int (the number of affected rows)
+        :param data: dict of pairs column-value
+        :return: int (the number of affected rows)
         """
         self.ds.update_one(Group, data, {'g_id': g_id})
 
@@ -44,13 +44,13 @@ class _GroupsDao:
         """
         CRU(D): groups
         :param g_id: int
-        :returns: int (the number of affected rows)
+        :return: int (the number of affected rows)
         """
         return self.ds.delete_one(Group, {'g_id': g_id})
 
     def get_groups(self):
         """
-        :returns: list[GroupLI]
+        :return: list[GroupLI]
         """
         sql = """select g.*,  
                 (select count(*) from tasks where g_id=g.g_id) as g_tasks_count 

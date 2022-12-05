@@ -16,8 +16,8 @@ class _TasksDao:
         (C)RUD: tasks
         Generated values are passed to DTO.
         :param p: Task
-        :returns: None
-        :raises: Exception if no rows inserted.
+        :return: None
+        :raises Exception: if no rows inserted.
         """
         self.ds.create_one(p)
 
@@ -25,8 +25,8 @@ class _TasksDao:
         """
         C(R)UD: tasks
         :param t_id: int
-        :returns: Task
-        :raises: Exception if amount of returned rows != 1.
+        :return: Task
+        :raises Exception: if amount of returned rows != 1.
         """
         return self.ds.read_one(Task, {'t_id': t_id})
 
@@ -34,8 +34,8 @@ class _TasksDao:
         """
         CR(U)D: tasks
         :param t_id: int
-        :param data: dict
-        :returns: int (the number of affected rows)
+        :param data: dict of pairs column-value
+        :return: int (the number of affected rows)
         """
         self.ds.update_one(Task, data, {'t_id': t_id})
 
@@ -43,6 +43,6 @@ class _TasksDao:
         """
         CRU(D): tasks
         :param t_id: int
-        :returns: int (the number of affected rows)
+        :return: int (the number of affected rows)
         """
         return self.ds.delete_one(Task, {'t_id': t_id})
