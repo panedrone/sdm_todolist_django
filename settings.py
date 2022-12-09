@@ -66,7 +66,7 @@ TEMPLATES = [  # === panedrone: generated defaults
         # 'DIRS': [],
         # https://stackoverflow.com/questions/1123898/django-static-page
         # === panedrone:
-        'DIRS': [BASE_DIR], #[os.path.join(BASE_DIR, 'static')],
+        'DIRS': [BASE_DIR],  # [os.path.join(BASE_DIR, 'static')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -82,3 +82,26 @@ TEMPLATES = [  # === panedrone: generated defaults
 DEBUG = True
 ALLOWED_HOSTS = ['*']
 # DEBUG = False
+
+
+LOGGING = {
+    'version': 1,
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        }
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+        }
+    },
+    'loggers': {
+        'django.db.backends': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+        }
+    }
+}
