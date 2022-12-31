@@ -8,14 +8,14 @@ from django.db import models
 
 class TaskLI(models.Model):
     t_id = models.AutoField(db_column='t_id', primary_key=True)
+    g_id = models.IntegerField(db_column='g_id')
     t_priority = models.IntegerField(db_column='t_priority')
     t_date = models.CharField(db_column='t_date', max_length=65535)
     t_subject = models.CharField(db_column='t_subject', max_length=65535)
 
     # Task list item. No g_id and t_comments in the list.
-    # Use SQL-shortcut to avoid Django conflicts with table "tasks".
+    # (No Django conflicts with dj-Task).
 
     class Meta:
         managed = False
-
-    SQL = """select * from tasks where g_id=?"""
+        db_table = 'tasks'

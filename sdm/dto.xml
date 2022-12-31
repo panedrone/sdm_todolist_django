@@ -8,13 +8,12 @@
 
     <dto-class name="dj-Task" ref="tasks"/>
 
-    <dto-class name="dj-TaskLI" ref="tasks(g_id)">
+    <dto-class name="dj-TaskLI" ref="tasks">
 
         <header><![CDATA[
     # Task list item. No g_id and t_comments in the list.
-    # Use SQL-shortcut to avoid Django conflicts with table "tasks".]]></header>
+    # (No Django conflicts with dj-Task).]]></header>
 
-        <field column="g_id" type="-"/>
         <field column="t_comments" type="-"/>
 
     </dto-class>
