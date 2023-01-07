@@ -37,7 +37,7 @@
             }
 
             function renderGroupDetails(g_id) {
-                fetch("/groups/" + g_id + '/')
+                fetch("/groups/" + g_id)
                         .then(response => response.json())
                         .then(group => {
                             let g_name = document.getElementById("g_name2");
@@ -49,37 +49,33 @@
                 renderGroupTasks(g_id);
             }
 
-            function createGroup() {
+            async function createGroup() {
                 let json = formToJson("form_create_group");
-                fetch("/groups/", {method: 'post', headers: JSON_HEADERS, body: json})
-                        .then(response => response.status)
-                        .then(status => {
-                            if (status === 200 || status === 201) {
-                                renderGroups();
-                            } else {
-                                alert(status);
-                            }
-                        });
+                let response = await fetch("/groups", {method: 'post', headers: JSON_HEADERS, body: json});
+                if (response.status === 201) {
+                    renderGroups();
+                } else {
+                    let text = await response.text()
+                    alert(response.status + "\n" + text);
+                }
             }
 
-            function updateGroup() {
+            async function updateGroup() {
                 let g_id = document.getElementById("curr_g_id").value;
                 let json = formToJson("form_update_group");
                 // alert(json)
-                fetch("/groups/" + g_id + '/', {method: 'put', headers: JSON_HEADERS, body: json})
-                        .then(response => response.status)
-                        .then(status => {
-                            if (status === 200) {
-                                renderGroups();
-                            } else {
-                                alert(status);
-                            }
-                        });
+                let response = await fetch("/groups/" + g_id, {method: 'put', headers: JSON_HEADERS, body: json})
+                if (response.status === 200) {
+                    renderGroups();
+                } else {
+                    let text = await response.text()
+                    alert(response.status + "\n" + text);
+                }
             }
 
             function deleteGroup() {
                 let g_id = document.getElementById("curr_g_id").value;
-                fetch("/groups/" + g_id + '/', {method: 'delete'})
+                fetch("/groups/" + g_id, {method: 'delete'})
                         .then(response => response.status)
                         .then(status => {
                             if (status === 200 || status === 204) {
@@ -94,7 +90,7 @@
 
             function renderTaskDetails(t_id) {
                 document.getElementById("curr_t_id").value = t_id;
-                fetch("/task/" + t_id + '/')
+                fetch("/tasks/" + t_id)
                         .then(response => response.json())
                         .then(task => {
                             let subj = document.getElementById("subj");
@@ -113,7 +109,7 @@
 
             function renderGroupTasks(g_id) {
                 let tasksTable = document.getElementById("tasks_table");
-                fetch("/groups/" + g_id + "/tasks/")
+                fetch("/groups/" + g_id + "/tasks")
                         .then(response => response.json())
                         .then(taskList => {
                             while (tasksTable.rows.length > 1) {
@@ -139,22 +135,24 @@
                         });
             }
 
-            function taskCreate() {
+            async function taskCreate() {
                 let g_id = document.getElementById("curr_g_id").value;
                 let json = formToJson("form_create_task");
-                fetch("/groups/" + g_id + "/tasks/", {method: 'post', headers: JSON_HEADERS, body: json})
-                        .then(response => response.status)
-                        .then(status => {
-                            if (status === 200 || status === 201) {
-                                renderGroups(); // update tasks count
-                                renderGroupDetails(g_id);
-                            } else {
-                                alert(status);
-                            }
-                        });
+                let response = await fetch("/groups/" + g_id + "/tasks", {
+                    method: 'post',
+                    headers: JSON_HEADERS,
+                    body: json
+                })
+                if (response.status === 201) {
+                    renderGroups(); // update tasks count
+                    renderGroupDetails(g_id);
+                } else {
+                    let text = await response.text()
+                    alert(response.status + "\n" + text);
+                }
             }
 
-            function updateTask() {
+            async function updateTask() {
                 let g_id = document.getElementById("curr_g_id").value;
                 let t_id = document.getElementById("curr_t_id").value;
                 let json = formToJson("form_task_details", function (object) {
@@ -165,22 +163,20 @@
                     object["t_id"] = t_id
                     object["g_id"] = g_id
                 });
-                fetch("/task/" + t_id + '/', {method: 'put', headers: JSON_HEADERS, body: json})
-                        .then(response => response.status)
-                        .then(status => {
-                            if (status === 200) {
-                                renderGroupTasks(g_id);
-                                renderTaskDetails(t_id);
-                            } else {
-                                alert(status);
-                            }
-                        });
+                let response = await fetch("/tasks/" + t_id, {method: 'put', headers: JSON_HEADERS, body: json})
+                if (response.status === 200) {
+                    renderGroupTasks(g_id);
+                    renderTaskDetails(t_id);
+                } else {
+                    let text = await response.text()
+                    alert(response.status + "\n" + text);
+                }
             }
 
             function taskDelete() {
                 let g_id = document.getElementById("curr_g_id").value;
                 let t_id = document.getElementById("curr_t_id").value;
-                fetch("/task/" + t_id + '/', {method: "delete"})
+                fetch("/tasks/" + t_id, {method: "delete"})
                         .then(response => response.status)
                         .then(status => {
                             if (status === 200 || status === 204) {

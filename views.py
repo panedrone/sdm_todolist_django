@@ -39,7 +39,7 @@ class GroupEditSerializer(serializers.ModelSerializer):
 class GroupSerializer(serializers.ModelSerializer):  # HyperlinkedModelSerializer
 
     g_id = serializers.IntegerField(required=False, allow_null=True)  # for a new one
-    g_name = serializers.CharField(required=True, max_length=256)
+    g_name = serializers.CharField(required=True, min_length=1, max_length=256)
 
     class Meta:
         model = Group
@@ -56,7 +56,7 @@ class TaskLISerializer(serializers.HyperlinkedModelSerializer):
 
 class NewTaskSerializer(serializers.ModelSerializer):  # HyperlinkedModelSerializer
 
-    t_subject = serializers.CharField(required=True, max_length=256)
+    t_subject = serializers.CharField(required=True, min_length=1, max_length=256)
 
     class Meta:
         model = Task
@@ -69,7 +69,7 @@ class TaskSerializer(serializers.ModelSerializer):  # HyperlinkedModelSerializer
     g_id = serializers.IntegerField(required=True)
     t_priority = serializers.IntegerField(required=True)
     t_date = serializers.DateField(required=True)
-    t_subject = serializers.CharField(required=True, max_length=256)
+    t_subject = serializers.CharField(required=True, min_length=1, max_length=256)
     t_comments = serializers.CharField(required=False, allow_blank=True)
 
     class Meta:
@@ -103,7 +103,7 @@ class GroupView(APIView):
     def put(request, g_id):
         sz = GroupEditSerializer(data=request.data, partial=True)
         sz.is_valid(raise_exception=True)
-        dao_g.update_group(g_id, sz.data)
+        dao_g.rename(g_id, sz.data['g_name'])
         return HttpResponse(status=status.HTTP_200_OK)
 
     @staticmethod

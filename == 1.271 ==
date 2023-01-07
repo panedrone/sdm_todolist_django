@@ -1,7 +1,0 @@
-DAL code for this project was generated with a sandbox SDM plugin v1.271
-
-New in v1.271:
-
-- updated code generator for Python (both "PythonCG.java" and internal "python.vm")
-- updated internal "data_store.py"
-- upcoming updates of "data_store_sqlalchemy.py"

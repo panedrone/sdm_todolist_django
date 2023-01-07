@@ -30,10 +30,10 @@ urlpatterns = [
     # https://stackoverflow.com/questions/1123898/django-static-page
     path('', TemplateView.as_view(template_name='static/index.html'), name='home'),
     # path('', include(router.urls)),
-    path('groups/', GroupListView.as_view()),
+    path('groups', GroupListView.as_view()),
     # https://stackoverflow.com/questions/47661536/django-2-0-path-error-2-0-w001-has-a-route-that-contains-p-begins-wit
-    path('groups/<int:g_id>/', GroupView.as_view()),
-    path('groups/<int:g_id>/tasks/', GroupTasksView.as_view()),
-    path('task/<int:t_id>/', TaskView.as_view())
+    path('groups/<int:g_id>', GroupView.as_view()),
+    path('groups/<int:g_id>/tasks', GroupTasksView.as_view()),
+    path('tasks/<int:t_id>', TaskView.as_view())
     # path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]  # + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

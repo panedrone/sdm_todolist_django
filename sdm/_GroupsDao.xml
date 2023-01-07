@@ -5,7 +5,6 @@
     <crud dto="dj-Group" table="groups">
         <create/>
         <read/>
-        <update/>
         <delete/>
     </crud>
 
