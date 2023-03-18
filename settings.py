@@ -45,6 +45,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 ROOT_URLCONF = 'urls'
 
+STATIC_ROOT = "/static/"
 STATIC_URL = 'static/'
 
 # SECURITY WARNING: keep the secret key used in production secret!

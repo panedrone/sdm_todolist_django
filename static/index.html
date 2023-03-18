@@ -3,380 +3,188 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/static/styles.css" type="text/css"/>
-    <link rel="icon" href="data:;base64,=">
-    <title>SDM + Django</title>
-    <script>
-            const JSON_HEADERS = {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            };
-
-            function renderGroups() {
-                let groupsTable = document.getElementById("groups_table");
-                fetch("/groups")
-                        .then(response => response.json())
-                        .then(groupList => {
-                            while (groupsTable.rows.length > 1) {
-                                groupsTable.deleteRow(1);
-                            }
-                            groupList.forEach(group => {
-                                let row = document.createElement("tr");
-                                let td1 = document.createElement("td");
-                                let a = document.createElement("a");
-                                a.href = 'javascript:renderGroupDetails(' + group.g_id + ');';
-                                a.innerHTML = group.g_name;
-                                td1.appendChild(a);
-                                let td2 = document.createElement("td");
-                                td2.className = "center";
-                                td2.innerHTML = group.g_tasks_count;
-                                row.appendChild(td1);
-                                row.appendChild(td2);
-                                groupsTable.appendChild(row);
-                            });
-                        });
-            }
-
-            function renderGroupDetails(g_id) {
-                fetch("/groups/" + g_id)
-                        .then(response => response.json())
-                        .then(group => {
-                            let g_name = document.getElementById("g_name2");
-                            g_name.value = group.g_name;
-                            showGroupDetails();
-                            hideTaskDetails();
-                        });
-                document.getElementById("curr_g_id").value = g_id;
-                renderGroupTasks(g_id);
-            }
-
-            async function createGroup() {
-                let json = formToJson("form_create_group");
-                let response = await fetch("/groups", {method: 'post', headers: JSON_HEADERS, body: json});
-                if (response.status === 201) {
-                    renderGroups();
-                } else {
-                    let text = await response.text()
-                    alert(response.status + "\n" + text);
-                }
-            }
-
-            async function updateGroup() {
-                let g_id = document.getElementById("curr_g_id").value;
-                let json = formToJson("form_update_group");
-                // alert(json)
-                let response = await fetch("/groups/" + g_id, {method: 'put', headers: JSON_HEADERS, body: json})
-                if (response.status === 200) {
-                    renderGroups();
-                } else {
-                    let text = await response.text()
-                    alert(response.status + "\n" + text);
-                }
-            }
-
-            function deleteGroup() {
-                let g_id = document.getElementById("curr_g_id").value;
-                fetch("/groups/" + g_id, {method: 'delete'})
-                        .then(response => response.status)
-                        .then(status => {
-                            if (status === 200 || status === 204) {
-                                hideTaskDetails();
-                                hideGroupDetails();
-                                renderGroups();
-                            } else {
-                                alert(status);
-                            }
-                        });
-            }
-
-            function renderTaskDetails(t_id) {
-                document.getElementById("curr_t_id").value = t_id;
-                fetch("/tasks/" + t_id)
-                        .then(response => response.json())
-                        .then(task => {
-                            let subj = document.getElementById("subj");
-                            subj.innerText = task.t_subject;
-                            let t_date = document.getElementById("t_date");
-                            t_date.value = task.t_date;
-                            let t_subject = document.getElementById("t_subject");
-                            t_subject.value = task.t_subject;
-                            let t_priority = document.getElementById("t_priority");
-                            t_priority.value = task.t_priority;
-                            let t_comments = document.getElementById("t_comments");
-                            t_comments.value = task.t_comments;
-                            showTaskDetails();
-                        });
-            }
-
-            function renderGroupTasks(g_id) {
-                let tasksTable = document.getElementById("tasks_table");
-                fetch("/groups/" + g_id + "/tasks")
-                        .then(response => response.json())
-                        .then(taskList => {
-                            while (tasksTable.rows.length > 1) {
-                                tasksTable.deleteRow(1);
-                            }
-                            taskList.forEach(task => {
-                                let row = document.createElement("tr");
-                                let td1 = document.createElement("td");
-                                td1.innerHTML = task.t_date;
-                                let td2 = document.createElement("td");
-                                let a = document.createElement("a");
-                                a.href = 'javascript:renderTaskDetails(' + task.t_id + ');';
-                                a.innerHTML = task.t_subject;
-                                td2.appendChild(a);
-                                let td3 = document.createElement("td");
-                                td3.className = "center";
-                                td3.innerHTML = task.t_priority;
-                                row.appendChild(td1);
-                                row.appendChild(td2);
-                                row.appendChild(td3);
-                                tasksTable.appendChild(row);
-                            });
-                        });
-            }
-
-            async function taskCreate() {
-                let g_id = document.getElementById("curr_g_id").value;
-                let json = formToJson("form_create_task");
-                let response = await fetch("/groups/" + g_id + "/tasks", {
-                    method: 'post',
-                    headers: JSON_HEADERS,
-                    body: json
-                })
-                if (response.status === 201) {
-                    renderGroups(); // update tasks count
-                    renderGroupDetails(g_id);
-                } else {
-                    let text = await response.text()
-                    alert(response.status + "\n" + text);
-                }
-            }
-
-            async function updateTask() {
-                let g_id = document.getElementById("curr_g_id").value;
-                let t_id = document.getElementById("curr_t_id").value;
-                let json = formToJson("form_task_details", function (object) {
-                    // alert(object)
-                    if (!isNaN(object["t_priority"])) {
-                        object["t_priority"] = parseInt(object["t_priority"]);
-                    }
-                    object["t_id"] = t_id
-                    object["g_id"] = g_id
-                });
-                let response = await fetch("/tasks/" + t_id, {method: 'put', headers: JSON_HEADERS, body: json})
-                if (response.status === 200) {
-                    renderGroupTasks(g_id);
-                    renderTaskDetails(t_id);
-                } else {
-                    let text = await response.text()
-                    alert(response.status + "\n" + text);
-                }
-            }
-
-            function taskDelete() {
-                let g_id = document.getElementById("curr_g_id").value;
-                let t_id = document.getElementById("curr_t_id").value;
-                fetch("/tasks/" + t_id, {method: "delete"})
-                        .then(response => response.status)
-                        .then(status => {
-                            if (status === 200 || status === 204) {
-                                hideTaskDetails();
-                                renderGroupDetails(g_id);
-                            } else {
-                                alert(status);
-                            }
-                        });
-            }
-
-            function hideTaskDetails() {
-                let form = document.getElementById("form_task_details");
-                form.style.visibility = "hidden";
-            }
-
-            function showTaskDetails() {
-                let form = document.getElementById("form_task_details");
-                form.style.visibility = "visible";
-            }
-
-            function hideGroupDetails() {
-                let group_details = document.getElementById("group_details");
-                group_details.style.visibility = "hidden";
-            }
-
-            function hideGroupDetails2() {
-                let group_details = document.getElementById("group_details");
-                group_details.style.visibility = "hidden";
-                hideTaskDetails();
-            }
-
-            function showGroupDetails() {
-                let group_details = document.getElementById("group_details");
-                group_details.style.visibility = "visible";
-            }
-
-            function formToJson(formId, preprocess_cb = null) {
-                // https://stackoverflow.com/questions/29775797/fetch-post-json-data
-                let form = document.forms.namedItem(formId);
-                let formData = new FormData(form);
-                let object = {};
-                formData.forEach((value, key) => object[key] = value);
-                if (preprocess_cb) {
-                    preprocess_cb(object);
-                }
-                return JSON.stringify(object);
-            }
-
-            document.addEventListener('DOMContentLoaded', function () {
-                renderGroups();
-            });
-
-
-    </script>
+    <title>TODO</title>
 </head>
+
 <body>
 
-<h2>SDM + Django + sqlite3</h2>
+<h2>SDM + Django + SQLite3</h2>
 
-<input type="hidden" id="curr_g_id">
-<input type="hidden" id="curr_t_id">
-
-<table class="bg" cellpadding="4">
-    <tr>
-        <td>
-            <table>
-                <tr>
-                    <td>
-                        <table id="groups_table" class="section">
-                            <tr>
-                                <th>Group</th>
-                                <th>Tasks Count</th>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <form method="post" enctype="multipart/form-data" name="form_create_group">
-                            <table class="controls">
-                                <tr>
-                                    <td>
-                                        <input type="text" name="g_name"/>
-                                    </td>
-                                    <td width="1">
-                                        <a href="javascript:createGroup();"><input type="button" value="+"/></a>
-                                    </td>
-                                </tr>
-                            </table>
-                        </form>
-                    </td>
-                </tr>
-            </table>
-
-        </td>
-
-        <td>
-            <table id="group_details" style="visibility: hidden">
-                <tr>
-                    <td>
-                        <form method="post" id="form_update_group">
-                            <table class="controls">
-                                <tr>
-                                    <td>
-                                        <label>
-                                            <input id="g_name2" class="group-header" type="text" name="g_name"
-                                                   value=""/>
-                                        </label>
-                                    </td>
-                                    <td width="1">
-                                        <a href="javascript:updateGroup();"><input type="button" value="!"/></a>
-                                    </td>
-                                    <td width="1">
-                                        <a href="javascript:deleteGroup();"><input type="button" value="x"/></a>
-                                    </td>
-                                    <td width="1">
-                                        <a href="javascript:hideGroupDetails2();"><input type="button"
-                                                                                         value="&lt;"/></a>
-                                    </td>
-                                </tr>
-                            </table>
-                        </form>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <table id="tasks_table" class="section">
-                            <tr>
-                                <th>Date</th>
-                                <th>Subject</th>
-                                <th>Priority</th>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-
-                        <form method="post" id="form_create_task">
-                            <table class="controls">
-                                <tr>
-                                    <td>
-                                        <input type="text" name="t_subject"/>
-                                    </td>
-                                    <td width="1">
-                                        <a href="javascript:taskCreate();"><input type="button" value="+"/></a>
-                                    </td>
-                                </tr>
-                            </table>
-                        </form>
-                    </td>
-                </tr>
-            </table>
-        </td>
-        <td>
-            <form id="form_task_details" style="visibility: hidden">
-                <div class="title" id="subj"></div>
+<div id="app">
+    <table class="bg" style="padding: 4px;">
+        <tr>
+            <td>
                 <table>
                     <tr>
-                        <td class="form-label">Date</td>
-                        <td><input type="text" name="t_date" id="t_date" value=""/></td>
-                    </tr>
-                    <tr>
-                        <td class="form-label">Subject</td>
-                        <td width="100%">
-                            <input type="text" name="t_subject" id="t_subject" value=""/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="form-label">Priority</td>
                         <td>
-                            <input type="text" name="t_priority" id="t_priority" value=""/>
+                            <table id="groups_table" class="section">
+                                <tr>
+                                    <th>Group</th>
+                                    <th>Tasks Count</th>
+                                </tr>
+                                <tr v-for="group in $data.groups">
+                                    <td>
+                                        <a href="#" @click="renderGroupDetails(group.g_id)">
+                                            ${ group.g_name }
+                                        </a>
+                                    </td>
+                                    <td style="text-align: center;width: 80px;">
+                                        ${ group.g_tasks_count }
+                                    </td>
+                                </tr>
+                            </table>
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="2">
+                        <td>
+                            <form method="post" enctype="multipart/form-data" name="form_create_group">
+                                <table class="controls">
+                                    <tr>
+                                        <td>
+                                            <input type="text" name="g_name"/>
+                                        </td>
+                                        <td width="1">
+                                            <a href="#" @click="groupCreate()">
+                                                <input type="button" value="+"/>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </form>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td>
+                <table id="group_details" style="visibility: hidden">
+                    <tr>
+                        <td>
+                            <form method="post" id="form_update_group">
+                                <table class="controls">
+                                    <tr>
+                                        <td>
+                                            <label>
+                                                <input id="g_name2" class="group-header" type="text" name="g_name"
+                                                       v-model="current_group.g_name"/>
+                                            </label>
+                                        </td>
+                                        <td width="1">
+                                            <a href="#" @click="groupUpdate()">
+                                                <input type="button" value="!"/>
+                                            </a>
+                                        </td>
+                                        <td width="1">
+                                            <a href="#" @click="groupDelete()">
+                                                <input type="button" value="x"/>
+                                            </a>
+                                        </td>
+                                        <td width="1">
+                                            <a href="javascript:hideGroupDetails2();"><input type="button"
+                                                                                             value="&lt;"/></a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table id="tasks_table" class="section">
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Subject</th>
+                                    <th>Priority</th>
+                                </tr>
+                                <tr v-for="t in $data.tasks">
+                                    <td>
+                                        ${ t.t_date }
+                                    </td>
+                                    <td>
+                                        <a href="#" @click="renderTaskDetails(t.t_id)">
+                                            ${ t.t_subject }
+                                        </a>
+                                    </td>
+
+                                    <td style="text-align: center;">
+                                        ${ t.t_priority }
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <form method="post" id="form_create_task">
+                                <table class="controls">
+                                    <tr>
+                                        <td>
+                                            <input type="text" name="t_subject"/>
+                                        </td>
+                                        <td width="1">
+                                            <a href="#" @click="taskCreate()">
+                                                <input type="button" value="+"/>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </form>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td>
+                <form id="form_task_details" style="visibility: hidden">
+                    <div class="title" id="subj"></div>
+                    <table>
+                        <tr>
+                            <td class="form-label">Date</td>
+                            <td><input type="text" name="t_date" id="t_date" v-model="current_task.t_date"/></td>
+                        </tr>
+                        <tr>
+                            <td class="form-label">Subject</td>
+                            <td width="100%">
+                                <input type="text" name="t_subject" id="t_subject" v-model="current_task.t_subject"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="form-label">Priority</td>
+                            <td>
+                                <input type="text" name="t_priority" id="t_priority" v-model="current_task.t_priority"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
                                     <textarea name="t_comments" id="t_comments" cols="40"
-                                              rows="10"></textarea>
-                        </td>
-                    </tr>
-                </table>
-                <table class="controls">
-                    <tr>
-                        <td>
-                        </td>
-                        <td width="1">
-                            <a href="javascript:updateTask()"><input type="button" value="!"/> </a>
-                        </td>
-                        <td width="1">
-                            <a href="javascript:taskDelete()"><input type="button" value="x"/> </a>
-                        </td>
-                        <td width="1">
-                            <a href="javascript:hideTaskDetails();"><input type="button" value="&lt;"/> </a>
-                        </td>
-                    </tr>
-                </table>
-            </form>
-        </td>
-    </tr>
-</table>
+                                              rows="10" v-model="current_task.t_comments"></textarea>
+                            </td>
+                        </tr>
+                    </table>
+                    <table class="controls">
+                        <tr>
+                            <td>
+                            </td>
+                            <td width="1">
+                                <a href="#" @click="taskUpdate()">
+                                    <input type="button" value="!"/>
+                                </a>
+                            </td>
+                            <td width="1">
+                                <a href="#" @click="taskDelete()">
+                                    <input type="button" value="x"/>
+                                </a>
+                            </td>
+                            <td width="1">
+                                <a href="javascript:hideTaskDetails();"><input type="button" value="&lt;"/> </a>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script src="/static/js/vue.js"></script>
+<script src="/static/js/index.js"></script>
 
 </body>
