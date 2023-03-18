@@ -29,7 +29,7 @@ class GroupLISerializer(serializers.ModelSerializer):
 
 
 class GroupEditSerializer(serializers.ModelSerializer):
-    g_name = serializers.CharField(required=True, max_length=256)
+    g_name = serializers.CharField(required=True, min_length=1, max_length=256)
 
     class Meta:
         model = Group
