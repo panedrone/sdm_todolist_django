@@ -17,7 +17,7 @@
                 <table>
                     <tr>
                         <td>
-                            <table id="groups_table" class="section">
+                            <table class="section">
                                 <tr>
                                     <th>Group</th>
                                     <th>Tasks Count</th>
@@ -41,9 +41,11 @@
                                 <table class="controls">
                                     <tr>
                                         <td>
-                                            <input type="text" name="g_name"/>
+                                            <label>
+                                                <input type="text" name="g_name"/>
+                                            </label>
                                         </td>
-                                        <td width="1">
+                                        <td class="w1">
                                             <a href="#" @click="groupCreate()">
                                                 <input type="button" value="+"/>
                                             </a>
@@ -64,21 +66,20 @@
                                     <tr>
                                         <td>
                                             <label>
-                                                <input id="g_name2" class="group-header" type="text" name="g_name"
-                                                       v-model="current_group.g_name"/>
+                                                <input class="group-header" type="text" v-model="current_group.g_name"/>
                                             </label>
                                         </td>
-                                        <td width="1">
+                                        <td class="w1">
                                             <a href="#" @click="groupUpdate()">
                                                 <input type="button" value="!"/>
                                             </a>
                                         </td>
-                                        <td width="1">
+                                        <td class="w1">
                                             <a href="#" @click="groupDelete()">
                                                 <input type="button" value="x"/>
                                             </a>
                                         </td>
-                                        <td width="1">
+                                        <td class="w1">
                                             <a href="javascript:hideGroupDetails2();"><input type="button"
                                                                                              value="&lt;"/></a>
                                         </td>
@@ -89,7 +90,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <table id="tasks_table" class="section">
+                            <table class="section">
                                 <tr>
                                     <th>Date</th>
                                     <th>Subject</th>
@@ -118,9 +119,11 @@
                                 <table class="controls">
                                     <tr>
                                         <td>
-                                            <input type="text" name="t_subject"/>
+                                            <label>
+                                                <input type="text" name="t_subject"/>
+                                            </label>
                                         </td>
-                                        <td width="1">
+                                        <td class="w1">
                                             <a href="#" @click="taskCreate()">
                                                 <input type="button" value="+"/>
                                             </a>
@@ -138,24 +141,33 @@
                     <table>
                         <tr>
                             <td class="form-label">Date</td>
-                            <td><input type="text" name="t_date" id="t_date" v-model="current_task.t_date"/></td>
+                            <td>
+                                <label for="t_date">
+                                    <input type="text" id="t_date" v-model="current_task.t_date"/>
+                                </label>
+                            </td>
                         </tr>
                         <tr>
                             <td class="form-label">Subject</td>
-                            <td width="100%">
-                                <input type="text" name="t_subject" id="t_subject" v-model="current_task.t_subject"/>
+                            <td class="w100">
+                                <label>
+                                    <input type="text" v-model="current_task.t_subject"/>
+                                </label>
                             </td>
                         </tr>
                         <tr>
                             <td class="form-label">Priority</td>
                             <td>
-                                <input type="text" name="t_priority" id="t_priority" v-model="current_task.t_priority"/>
+                                <label>
+                                    <input type="text" v-model="current_task.t_priority"/>
+                                </label>
                             </td>
                         </tr>
                         <tr>
                             <td colspan="2">
-                                    <textarea name="t_comments" id="t_comments" cols="40"
-                                              rows="10" v-model="current_task.t_comments"></textarea>
+                                <label>
+                                    <textarea cols="40" rows="10" v-model="current_task.t_comments"></textarea>
+                                </label>
                             </td>
                         </tr>
                     </table>
@@ -163,17 +175,17 @@
                         <tr>
                             <td>
                             </td>
-                            <td width="1">
+                            <td class="w1">
                                 <a href="#" @click="taskUpdate()">
                                     <input type="button" value="!"/>
                                 </a>
                             </td>
-                            <td width="1">
+                            <td class="w1">
                                 <a href="#" @click="taskDelete()">
                                     <input type="button" value="x"/>
                                 </a>
                             </td>
-                            <td width="1">
+                            <td class="w1">
                                 <a href="javascript:hideTaskDetails();"><input type="button" value="&lt;"/> </a>
                             </td>
                         </tr>
