@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/sdm_demo_django_todolist_sqlite3.iml" filepath="$PROJECT_DIR$/.idea/sdm_demo_django_todolist_sqlite3.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/sdm_demo_todolist_sqlite3_django.iml" filepath="$PROJECT_DIR$/.idea/sdm_demo_todolist_sqlite3_django.iml" />
     </modules>
   </component>
 </project>
