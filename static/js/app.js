@@ -91,6 +91,7 @@ new Vue({
                         let subj = document.getElementById("subj");
                         subj.innerText = task.t_subject;
                         this.$data.current_task = task;
+                        this.$data.task_error = null;
                         showTaskDetails();
                     } else {
                         let j = await resp.text()
@@ -122,7 +123,7 @@ new Vue({
         },
         groupUpdate() {
             let g_id = this.$data.current_group.g_id
-            let json = formToJson("form_update_group");
+            let json = JSON.stringify(this.$data.current_group)
             fetch("/groups/" + g_id, {
                 method: 'put',
                 headers: JSON_HEADERS,
