@@ -17,8 +17,7 @@ dto.xml
 
 <dto-class name="dj-TaskLI" ref="tasks">
     <header><![CDATA[
-    # Task list item. No no t_comments in the list.
-    # (No Django conflicts with dj-Task).]]></header>
+    # Task list item. No no t_comments in the list.]]></header>
     <field column="t_comments" type="-"/>
 </dto-class>
 ```
