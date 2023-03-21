@@ -14,7 +14,6 @@ class TaskLI(models.Model):
     t_subject = models.CharField(db_column='t_subject', max_length=65535)
 
     # Task list item. No t_comments in the list.
-    # (No Django conflicts with dj-Task).
 
     class Meta:
         managed = False
