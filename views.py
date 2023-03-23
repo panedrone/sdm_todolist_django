@@ -89,7 +89,7 @@ class ProjectView(APIView):
     @staticmethod
     def get(_, p_id):
         project = dao_p.read_project(p_id)
-        sz = ProjectSerializer(project, many=False)
+        sz = ProjectSerializer(project)
         return Response(sz.data)
 
     @staticmethod
