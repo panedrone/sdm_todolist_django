@@ -88,8 +88,8 @@ class ProjectListView(APIView):
 class ProjectView(APIView):
     @staticmethod
     def get(_, p_id):
-        gr = dao_p.read_project(p_id)
-        sz = ProjectSerializer(gr, many=False)
+        project = dao_p.read_project(p_id)
+        sz = ProjectSerializer(project, many=False)
         return Response(sz.data)
 
     @staticmethod
