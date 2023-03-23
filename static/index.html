@@ -8,7 +8,7 @@
 
 <body>
 
-<h2>SDM + Django + SQLite3</h2>
+<h2>SDM + Python + Django + SQLite3</h2>
 
 <div id="app">
     <table class="bg" style="padding: 4px;">
@@ -71,7 +71,7 @@
                                         </td>
                                         <td class="w1">
                                             <a href="#" @click="groupUpdate()">
-                                                <input type="button" value="!"/>
+                                                <input type="button" value="&#x2713;"/>
                                             </a>
                                         </td>
                                         <td class="w1">
@@ -80,8 +80,9 @@
                                             </a>
                                         </td>
                                         <td class="w1">
-                                            <a href="javascript:hideGroupDetails2();"><input type="button"
-                                                                                             value="&lt;"/></a>
+                                            <a href="javascript:hideGroupDetails2();">
+                                                <input type="button" value="&lt;"/>
+                                            </a>
                                         </td>
                                     </tr>
                                 </table>
@@ -137,7 +138,28 @@
             </td>
             <td>
                 <form id="form_task_details" style="visibility: hidden">
-                    <div class="title" id="subj"></div>
+                    <table class="controls">
+                        <tr>
+                            <td>
+                                <div class="title" id="subj">
+                                    ${ current_subject }
+                                </div>
+                            </td>
+                            <td class="w1">
+                                <a href="#" @click="taskUpdate()">
+                                    <input type="button" value="&#x2713;"/>
+                                </a>
+                            </td>
+                            <td class="w1">
+                                <a href="#" @click="taskDelete()">
+                                    <input type="button" value="x"/>
+                                </a>
+                            </td>
+                            <td class="w1">
+                                <a href="javascript:hideTaskDetails();"><input type="button" value="&lt;"/> </a>
+                            </td>
+                        </tr>
+                    </table>
                     <table>
                         <tr>
                             <td class="form-label">Date</td>
@@ -171,28 +193,9 @@
                             </td>
                         </tr>
                     </table>
-                    <table class="controls">
-                        <tr>
-                            <td>
-                                <div style="color: crimson;max-width: 200px;">
-                                    ${ task_error }
-                                </div>
-                            </td>
-                            <td class="w1">
-                                <a href="#" @click="taskUpdate()">
-                                    <input type="button" value="!"/>
-                                </a>
-                            </td>
-                            <td class="w1">
-                                <a href="#" @click="taskDelete()">
-                                    <input type="button" value="x"/>
-                                </a>
-                            </td>
-                            <td class="w1">
-                                <a href="javascript:hideTaskDetails();"><input type="button" value="&lt;"/> </a>
-                            </td>
-                        </tr>
-                    </table>
+                    <div style="color: crimson;max-width: 310px;">
+                        ${ task_error }
+                    </div>
                 </form>
             </td>
         </tr>
