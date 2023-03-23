@@ -32,13 +32,11 @@ TasksDao.xml
 Generated code in action:
 ```go
 class ProjectListView(APIView):
-    @staticmethod
     def get(_):
         projects = dao_p.get_all_projects()
         sz = ProjectLiSerializer(projects, many=True)
         return Response(sz.data)
     
-    @staticmethod
     def post(request):
         sz = ProjectSerializer(data=request.data)
         sz.is_valid(raise_exception=True)
@@ -47,20 +45,17 @@ class ProjectListView(APIView):
 
 
 class ProjectView(APIView):
-    @staticmethod
     def get(_, p_id):
         project = dao_p.read_project(p_id)
         sz = ProjectSerializer(project)
         return Response(sz.data)
     
-    @staticmethod
     def put(request, p_id):
         sz = ProjectSerializer(data=request.data, partial=True)
         sz.is_valid(raise_exception=True)
         dao_p.rename_project(p_id, sz.data['p_name'])
         return HttpResponse(status=status.HTTP_200_OK)
     
-    @staticmethod
     def delete(_, p_id):
         _ds.delete_by_filter(Task, {'p_id': p_id})
         dao_p.delete_project(p_id)
