@@ -22,6 +22,7 @@ dto.xml
 ProjectsDao.xml
 ```xml
 <crud dto="dj-Project" table="projects"/>
+
 <query-dto-list dto="dj-ProjectLI" method="get_projects"/>
 ```
 TasksDao.xml
