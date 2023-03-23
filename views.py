@@ -8,9 +8,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from dal.data_store import create_ds
-from dal.group import Group
-from dal.group_li import GroupLI
-from dal.groups_dao import GroupsDao
+from dal.project import Project
+from dal.project_li import ProjectLI
+from dal.projects_dao import ProjectsDao
 from dal.task import Task
 from dal.tasks_dao import TasksDao
 
@@ -18,31 +18,31 @@ django.setup()
 
 _ds = create_ds()
 
-dao_g = GroupsDao(_ds)
+dao_p = ProjectsDao(_ds)
 dao_t = TasksDao(_ds)
 
 
-class GroupLISerializer(serializers.ModelSerializer):
+class ProjectLISerializer(serializers.ModelSerializer):
     class Meta:
-        model = GroupLI
+        model = ProjectLI
         fields = '__all__'  # '__all__' cannot be used with HyperlinkedModelSerializer
 
 
-class GroupEditSerializer(serializers.ModelSerializer):
-    g_name = serializers.CharField(required=True, min_length=1, max_length=256)
+class ProjectEditSerializer(serializers.ModelSerializer):
+    p_name = serializers.CharField(required=True, min_length=1, max_length=256)
 
     class Meta:
-        model = Group
-        fields = ['g_name']
+        model = Project
+        fields = ['p_name']
 
 
-class GroupSerializer(serializers.ModelSerializer):  # HyperlinkedModelSerializer
+class ProjectSerializer(serializers.ModelSerializer):  # HyperlinkedModelSerializer
 
-    g_id = serializers.IntegerField(required=False, allow_null=True)  # for a new one
-    g_name = serializers.CharField(required=True, min_length=1, max_length=256)
+    p_id = serializers.IntegerField(required=False, allow_null=True)  # for a new one
+    p_name = serializers.CharField(required=True, min_length=1, max_length=256)
 
     class Meta:
-        model = Group
+        model = Project
         fields = '__all__'
 
 
@@ -51,7 +51,7 @@ class GroupSerializer(serializers.ModelSerializer):  # HyperlinkedModelSerialize
 class TaskLISerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Task
-        fields = ['t_id', 'g_id', 't_priority', 't_date', 't_subject']
+        fields = ['t_id', 'p_id', 't_priority', 't_date', 't_subject']
 
 
 class NewTaskSerializer(serializers.ModelSerializer):  # HyperlinkedModelSerializer
@@ -66,7 +66,7 @@ class NewTaskSerializer(serializers.ModelSerializer):  # HyperlinkedModelSeriali
 class TaskSerializer(serializers.ModelSerializer):  # HyperlinkedModelSerializer
 
     t_id = serializers.IntegerField(required=True)
-    g_id = serializers.IntegerField(required=True)
+    p_id = serializers.IntegerField(required=True)
     t_priority = serializers.IntegerField(required=True)
     t_date = serializers.DateField(required=True)
     t_subject = serializers.CharField(required=True, min_length=1, max_length=256)
@@ -77,55 +77,55 @@ class TaskSerializer(serializers.ModelSerializer):  # HyperlinkedModelSerializer
         fields = '__all__'
 
 
-class GroupListView(APIView):
+class ProjectListView(APIView):
     @staticmethod
     def get(_):
-        groups = dao_g.get_all_groups()
-        sz = GroupLISerializer(groups, many=True)
+        projects = dao_p.get_all_projects()
+        sz = ProjectLISerializer(projects, many=True)
         return Response(sz.data)
 
     @staticmethod
     def post(request):
-        sz = GroupEditSerializer(data=request.data)
+        sz = ProjectEditSerializer(data=request.data)
         sz.is_valid(raise_exception=True)
-        dao_g.create_group(sz)
+        dao_p.create_project(sz)
         return HttpResponse(status=status.HTTP_201_CREATED)
 
 
-class GroupView(APIView):
+class ProjectView(APIView):
     @staticmethod
-    def get(_, g_id):
-        gr = dao_g.read_group(g_id)
-        sz = GroupSerializer(gr, many=False)
+    def get(_, p_id):
+        gr = dao_p.read_project(p_id)
+        sz = ProjectSerializer(gr, many=False)
         return Response(sz.data)
 
     @staticmethod
-    def put(request, g_id):
-        sz = GroupEditSerializer(data=request.data, partial=True)
+    def put(request, p_id):
+        sz = ProjectEditSerializer(data=request.data, partial=True)
         sz.is_valid(raise_exception=True)
-        dao_g.rename(g_id, sz.data['g_name'])
+        dao_p.rename_project(p_id, sz.data['p_name'])
         return HttpResponse(status=status.HTTP_200_OK)
 
     @staticmethod
-    def delete(_, g_id):
-        _ds.delete_by_filter(Task, {'g_id': g_id})
-        dao_g.delete_group(g_id)
+    def delete(_, p_id):
+        _ds.delete_by_filter(Task, {'p_id': p_id})
+        dao_p.delete_project(p_id)
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
 
-class GroupTasksView(APIView):
+class ProjectTasksView(APIView):
     @staticmethod
-    def get(_, g_id):
-        queryset = dao_t.get_by_group(g_id)
+    def get(_, p_id):
+        queryset = dao_t.get_by_project(p_id)
         sz = TaskLISerializer(queryset, many=True)
         return Response(sz.data)
 
     @staticmethod
-    def post(request, g_id):
+    def post(request, p_id):
         sz = NewTaskSerializer(data=request.data)
         sz.is_valid(raise_exception=True)  # to make validated_data available
         task = Task(**sz.validated_data)
-        task.g_id = g_id
+        task.p_id = p_id
         now = datetime.now()
         dt_string = now.strftime("%Y-%m-%d")
         task.t_date = dt_string

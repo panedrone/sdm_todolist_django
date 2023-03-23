@@ -8,12 +8,12 @@ from django.db import models
 
 class TaskLI(models.Model):
     t_id = models.AutoField(db_column='t_id', primary_key=True)
-    g_id = models.IntegerField(db_column='g_id')
+    p_id = models.IntegerField(db_column='p_id', blank=True, null=True)
     t_priority = models.IntegerField(db_column='t_priority')
     t_date = models.CharField(db_column='t_date', max_length=65535)
     t_subject = models.CharField(db_column='t_subject', max_length=65535)
 
-    # Task list item. No t_comments in the list.
+    # Task list item. No t_comments.
 
     class Meta:
         managed = False

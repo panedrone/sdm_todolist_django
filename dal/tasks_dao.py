@@ -12,8 +12,8 @@ class TasksDao(_TasksDao):
     def __init__(self, ds):
         super().__init__(ds)
 
-    def get_by_group(self, g_id: int):
+    def get_by_project(self, p_id: int):
         fields = ['t_id', 't_date', 't_subject', 't_priority']
-        params = {'g_id': g_id}
+        params = {'p_id': p_id}
         tasks = self.ds.filter(TaskLI, params, fields).order_by('t_date', 't_id').all()
         return tasks

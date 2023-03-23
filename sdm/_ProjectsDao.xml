@@ -2,12 +2,12 @@
 <dao-class xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:noNamespaceSchemaLocation="dao.xsd">
 
-    <crud dto="dj-Group" table="groups">
+    <crud dto="dj-Project" table="projects">
         <create/>
         <read/>
         <delete/>
     </crud>
 
-    <query-dto-list dto="dj-GroupLI" method="get_groups"/>
+    <query-dto-list dto="dj-ProjectLI" method="get_projects"/>
 
 </dao-class>

@@ -13,7 +13,7 @@
     <cpp class-prefix=""/>
 
     <jdbc jar="sdm/sqlite-jdbc-3.40.0.0.jar" class="org.sqlite.JDBC"
-          url="jdbc:sqlite:$PROJECT_DIR$/todolist.sqlite3" user="" pwd=""/>
+          url="jdbc:sqlite:$PROJECT_DIR$/todolist.sqlite" user="" pwd=""/>
 
     <type-map default="">
 
