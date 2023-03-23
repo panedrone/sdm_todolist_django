@@ -4,11 +4,11 @@
 
     <dto-class name="dj-Project" ref="projects"/>
 
-    <dto-class name="dj-ProjectLI" ref="get_projects.sql" pk="p_id"/>
+    <dto-class name="dj-ProjectLi" ref="get_projects.sql" pk="p_id"/>
 
     <dto-class name="dj-Task" ref="tasks"/>
 
-    <dto-class name="dj-TaskLI" ref="tasks">
+    <dto-class name="dj-TaskLi" ref="tasks">
         <header><![CDATA[
     # Task list item. No t_comments.]]></header>
         <field column="t_comments" type="-"/>

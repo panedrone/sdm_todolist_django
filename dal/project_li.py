@@ -6,7 +6,7 @@ https://sqldalmaker.sourceforge.net/
 from django.db import models
 
 
-class ProjectLI(models.Model):
+class ProjectLi(models.Model):
     p_id = models.AutoField(db_column='p_id', primary_key=True)
     p_name = models.TextField(db_column='p_name')
     p_tasks_count = models.TextField(db_column='p_tasks_count')

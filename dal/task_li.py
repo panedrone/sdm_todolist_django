@@ -6,7 +6,7 @@ https://sqldalmaker.sourceforge.net/
 from django.db import models
 
 
-class TaskLI(models.Model):
+class TaskLi(models.Model):
     t_id = models.AutoField(db_column='t_id', primary_key=True)
     p_id = models.IntegerField(db_column='p_id', blank=True, null=True)
     t_priority = models.IntegerField(db_column='t_priority')

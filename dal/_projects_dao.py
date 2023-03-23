@@ -4,7 +4,7 @@ https://sqldalmaker.sourceforge.net/
 """
 
 from dal.project import Project
-from dal.project_li import ProjectLI
+from dal.project_li import ProjectLi
 
 
 class _ProjectsDao:
@@ -41,7 +41,7 @@ class _ProjectsDao:
 
     def get_projects(self):
         """
-        :return: list[ProjectLI]
+        :return: list[ProjectLi]
         """
         sql = """select p.*, 
                 (select count(*) from tasks where p_id=p.p_id) as p_tasks_count 
@@ -50,7 +50,7 @@ class _ProjectsDao:
         _res = []
 
         def _map_cb(row):
-            _obj = ProjectLI()
+            _obj = ProjectLi()
             _obj.p_id = row["p_id"]  # q <- q
             _obj.p_name = row["p_name"]  # q <- q
             _obj.p_tasks_count = row["p_tasks_count"]  # q <- q

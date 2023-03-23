@@ -9,9 +9,10 @@ from rest_framework.views import APIView
 
 from dal.data_store import create_ds
 from dal.project import Project
-from dal.project_li import ProjectLI
+from dal.project_li import ProjectLi
 from dal.projects_dao import ProjectsDao
 from dal.task import Task
+from dal.task_li import TaskLi
 from dal.tasks_dao import TasksDao
 
 django.setup()
@@ -22,18 +23,10 @@ dao_p = ProjectsDao(_ds)
 dao_t = TasksDao(_ds)
 
 
-class ProjectLISerializer(serializers.ModelSerializer):
+class ProjectLiSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ProjectLI
+        model = ProjectLi
         fields = '__all__'  # '__all__' cannot be used with HyperlinkedModelSerializer
-
-
-class ProjectEditSerializer(serializers.ModelSerializer):
-    p_name = serializers.CharField(required=True, min_length=1, max_length=256)
-
-    class Meta:
-        model = Project
-        fields = ['p_name']
 
 
 class ProjectSerializer(serializers.ModelSerializer):  # HyperlinkedModelSerializer
@@ -48,10 +41,10 @@ class ProjectSerializer(serializers.ModelSerializer):  # HyperlinkedModelSeriali
 
 # list item without comments:
 
-class TaskLISerializer(serializers.HyperlinkedModelSerializer):
+class TaskLiSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = Task
-        fields = ['t_id', 'p_id', 't_priority', 't_date', 't_subject']
+        model = TaskLi
+        fields = ['t_id', 'p_id', 't_priority', 't_date', 't_subject']  # '__all__ not working here
 
 
 class NewTaskSerializer(serializers.ModelSerializer):  # HyperlinkedModelSerializer
@@ -60,10 +53,10 @@ class NewTaskSerializer(serializers.ModelSerializer):  # HyperlinkedModelSeriali
 
     class Meta:
         model = Task
-        fields = ['t_subject']
+        fields = ['t_subject']  # mandatory
 
 
-class TaskSerializer(serializers.ModelSerializer):  # HyperlinkedModelSerializer
+class TaskEditSerializer(serializers.ModelSerializer):  # HyperlinkedModelSerializer
 
     t_id = serializers.IntegerField(required=True)
     p_id = serializers.IntegerField(required=True)
@@ -81,12 +74,12 @@ class ProjectListView(APIView):
     @staticmethod
     def get(_):
         projects = dao_p.get_all_projects()
-        sz = ProjectLISerializer(projects, many=True)
+        sz = ProjectLiSerializer(projects, many=True)
         return Response(sz.data)
 
     @staticmethod
     def post(request):
-        sz = ProjectEditSerializer(data=request.data)
+        sz = ProjectSerializer(data=request.data)
         sz.is_valid(raise_exception=True)
         dao_p.create_project(sz)
         return HttpResponse(status=status.HTTP_201_CREATED)
@@ -101,7 +94,7 @@ class ProjectView(APIView):
 
     @staticmethod
     def put(request, p_id):
-        sz = ProjectEditSerializer(data=request.data, partial=True)
+        sz = ProjectSerializer(data=request.data, partial=True)
         sz.is_valid(raise_exception=True)
         dao_p.rename_project(p_id, sz.data['p_name'])
         return HttpResponse(status=status.HTTP_200_OK)
@@ -117,7 +110,7 @@ class ProjectTasksView(APIView):
     @staticmethod
     def get(_, p_id):
         queryset = dao_t.get_by_project(p_id)
-        sz = TaskLISerializer(queryset, many=True)
+        sz = TaskLiSerializer(queryset, many=True)
         return Response(sz.data)
 
     @staticmethod
@@ -139,13 +132,13 @@ class TaskView(APIView):
     @staticmethod
     def get(_, t_id):
         t = dao_t.read_task(t_id)
-        sz = TaskSerializer(t, many=False)
+        sz = TaskEditSerializer(t, many=False)
         resp = Response(sz.data)
         return resp
 
     @staticmethod
     def put(request, t_id):
-        sz = TaskSerializer(data=request.data)
+        sz = TaskEditSerializer(data=request.data)
         sz.is_valid(raise_exception=True)
         dao_t.update_task(t_id, sz.data)
         return HttpResponse(status=status.HTTP_200_OK)
