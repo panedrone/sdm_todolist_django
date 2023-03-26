@@ -1,7 +1,7 @@
 # sdm_demo_todolist_django
 Quick Demo of how to use [SQL DAL Maker](https://github.com/panedrone/sqldalmaker) + Python + Django.
 
-Front-end is written in Vue.js, SQLite3 is used as database.
+Front-end is written in Vue.js, SQLite3 is used as a database.
 
 ![demo-go.png](demo-go.png)
 
