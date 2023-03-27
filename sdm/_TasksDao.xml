@@ -2,7 +2,7 @@
 <dao-class xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:noNamespaceSchemaLocation="dao.xsd">
 
-    <crud dto="dj-Task" table="tasks">
+    <crud dto="dj-Task">
         <create/>
         <read/>
         <update/>

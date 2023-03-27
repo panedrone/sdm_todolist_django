@@ -24,13 +24,13 @@ dto.xml
 ```
 ProjectsDao.xml
 ```xml
-<crud dto="dj-Project" table="projects"/>
+<crud dto="dj-Project"/>
 
 <query-dto-list dto="dj-ProjectLi" method="get_projects"/>
 ```
 TasksDao.xml
 ```xml
-<crud dto="dj-Task" table="tasks"/>
+<crud dto="dj-Task"/>
 ```
 Generated code in action:
 ```go
