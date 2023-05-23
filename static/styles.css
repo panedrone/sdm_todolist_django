@@ -4,6 +4,13 @@ body {
     color: #555;
 }
 
+/*https://stackoverflow.com/questions/58069900/vue-js-showing-content-that-should-be-hidden-by-a-v-if-tag-when-user-refreshes-p*/
+/*Vue.js showing content that should be hidden by a v-if tag when user refreshes page*/
+
+[v-cloak] {
+    display: none;
+}
+
 .bg {
 }
 
