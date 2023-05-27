@@ -5,6 +5,8 @@ const JSON_HEADERS = {
 
 const NO_PROJECT = {"p_id": -1, "p_name": null, "p_tasks_count": -1}
 
+const NO_TASK_LI = {"t_id": -1, "t_date": null, "t_subject": null, "t_priority": -1}
+
 const NO_TASK = {"t_id": -1, "t_date": null, "t_subject": null, "t_priority": -1, "t_comments": null}
 
 new Vue({
@@ -14,7 +16,7 @@ new Vue({
         projects: null,
         p_name: null,
         current_project: NO_PROJECT,
-        tasks: null,
+        tasks: [NO_TASK_LI],
         t_subject: null,
         current_subject: null,
         current_task: NO_TASK,
