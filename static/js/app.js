@@ -22,6 +22,8 @@ new Vue({
         current_task: NO_TASK,
         whoiam: "?",
         task_error: null,
+        project_details: false,
+        task_details: false,
     },
     methods: {
         askWhoIAm() {
@@ -55,8 +57,8 @@ new Vue({
         renderGroupDetails(p_id) {
             this.renderCurrentGroup(p_id)
             this.renderGroupTasks(p_id);
-            showGroupDetails();
-            hideTaskDetails();
+            this.project_details = true
+            this.task_details = false
         },
         renderCurrentGroup(p_id) {
             fetch("api/projects/" + p_id)
@@ -94,7 +96,7 @@ new Vue({
                         this.$data.current_subject = task.t_subject;
                         this.$data.current_task = task;
                         this.$data.task_error = null;
-                        showTaskDetails();
+                        this.task_details = true
                     } else {
                         let j = await resp.text()
                         alert(resp.status + "\n" + j);
@@ -150,8 +152,8 @@ new Vue({
             })
                 .then(async (resp) => {
                     if (resp.status === 204) {
-                        hideTaskDetails();
-                        hideGroupDetails();
+                        this.project_details = false
+                        this.task_details = false
                         this.renderGroups();
                     } else {
                         let j = await resp.text()
@@ -216,7 +218,7 @@ new Vue({
             })
                 .then(async (resp) => {
                     if (resp.status === 204) {
-                        hideTaskDetails();
+                        this.task_details = false
                         this.renderGroups(); // update tasks count
                         this.renderGroupDetails(p_id);
                     } else {
@@ -228,6 +230,13 @@ new Vue({
                     console.log(reason)
                 })
         },
+        hideProjectDetails() {
+            this.project_details = false
+            this.task_details = false
+        },
+        hideTaskDetails() {
+            this.task_details = false
+        },
     },
     created() {
     },
@@ -238,29 +247,3 @@ new Vue({
         this.renderGroups();
     },
 })
-
-function hideTaskDetails() {
-    let form = document.getElementById("form_task_details");
-    form.style.visibility = "hidden";
-}
-
-function showTaskDetails() {
-    let form = document.getElementById("form_task_details");
-    form.style.visibility = "visible";
-}
-
-function hideGroupDetails() {
-    let group_details = document.getElementById("group_details");
-    group_details.style.visibility = "hidden";
-}
-
-function hideGroupDetails2() {
-    let group_details = document.getElementById("group_details");
-    group_details.style.visibility = "hidden";
-    hideTaskDetails();
-}
-
-function showGroupDetails() {
-    let group_details = document.getElementById("group_details");
-    group_details.style.visibility = "visible";
-}
