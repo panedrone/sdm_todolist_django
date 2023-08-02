@@ -26,7 +26,6 @@ class _TasksDao:
         C(R)UD: tasks
         :param t_id: int
         :return: Task
-        :raises Exception: if amount of returned rows != 1.
         """
         return self.ds.read_one(Task, {'t_id': t_id})
 

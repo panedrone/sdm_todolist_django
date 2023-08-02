@@ -27,7 +27,6 @@ class _ProjectsDao:
         C(R)UD: projects
         :param p_id: int
         :return: Project
-        :raises Exception: if amount of returned rows != 1.
         """
         return self.ds.read_one(Project, {'p_id': p_id})
 
