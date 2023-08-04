@@ -1,7 +1,7 @@
 """
     This file is a part of SQL DAL Maker project: https://sqldalmaker.sourceforge.net
     It demonstrates how to implement an interface DataStore in Python + sqlite3|psycopg2|mysql|cx_oracle|django.db.
-    More about DataStore: https://sqldalmaker.sourceforge.net/data_store.html
+    More about DataStore: https://sqldalmaker.sourceforge.net/preconfig.html#ds
     Recent version: https://github.com/panedrone/sqldalmaker/blob/master/src/resources/data_store.py
 
     Successfully tested with both "no-django" and django.db:
@@ -19,15 +19,6 @@
     Improvements are welcome: sqldalmaker@gmail.com
 
 """
-
-# uncomment one of the imports below for "no-django"
-
-# import sqlite3
-# import psycopg2
-# import mysql.connector
-# import cx_oracle
-
-# uncomment the imports and code below while using django.db:
 
 import django.db
 from django.apps import AppConfig
@@ -319,25 +310,6 @@ class _DS(DataStore):
     def delete_one(self, cls, pk: dict) -> int:
         rc = self.delete_by_filter(cls, pk)  # no fetch!
         return rc
-
-    # uncomment to use without django.db:
-
-    # def begin(self):
-    #     self.conn.execute('begin')  # sqlite3
-    #     self.conn.start_transaction() # mysql
-    #     self.conn.begin() # psycopg2
-    #
-    # # uncomment to use without django.db:
-    # def commit(self):
-    #     self.conn.execute('commit')  # sqlite3
-    #     self.conn.commit() # psycopg2, mysql
-    #
-    # # uncomment to use without django.db:
-    # def rollback(self):
-    #     self.conn.execute("rollback")  # sqlite3
-    #     self.conn.rollback() # psycopg2, mysql
-
-    # uncomment to use with django.db:
 
     def begin(self):
         django.db.transaction.set_autocommit(False)
