@@ -1,16 +1,16 @@
 """
     This file is a part of SQL DAL Maker project: https://sqldalmaker.sourceforge.net
-    It demonstrates how to implement an interface DataStore in Python + sqlite3|psycopg2|mysql|cx_oracle|django.db.
+    It demonstrates how to implement an interface DataStore in Python/django.db.
     More about DataStore: https://sqldalmaker.sourceforge.net/preconfig.html#ds
-    Recent version: https://github.com/panedrone/sqldalmaker/blob/master/src/resources/data_store.py
+    Recent version: https://github.com/panedrone/sqldalmaker/blob/master/src/resources/data_store_django.py
 
-    Successfully tested with both "no-django" and django.db:
+    Successfully tested with:
 
     - 'django.db.backends.sqlite3' ---------------- built-in
     - 'django.db.backends.postgresql_psycopg2' ---- pip install psycopg2
     - 'mysql.connector.django' -------------------- pip install mysql-connector-python
        ^^ instead of built-in 'django.db.backends.mysql' to enable cursor.stored_results().
-       MySQL SP returning result-sets --> http://www.mysqltutorial.org/calling-mysql-stored-procedures-python/
+       MySQL SP returning result-sets --> https://www.mysqltutorial.org/calling-mysql-stored-procedures-python/
        MySQL Connector/Python as Django Engine? -->
        https://stackoverflow.com/questions/26573984/django-how-to-install-mysql-connector-python-with-pip3)
     - 'django.db.backends.oracle' ------------------pip install cx_oracle
@@ -143,16 +143,6 @@ class DataStore:
 
     # Raw-SQL methods
 
-    def insert_row(self, sql, params, ai_values):
-        """
-        :param sql: str
-        :param params: array, values of SQL parameters
-        :param ai_values: an array like [["o_id", 1], ...] to specify and obtain auto-incremented values
-        :return: None
-        :raise Exception if no rows inserted.
-        """
-        pass
-
     def exec_dml(self, sql, params):
         """
         :param sql: str
@@ -209,25 +199,10 @@ class _DS(DataStore):
 
     def __init__(self):
         self.conn = None
-        self.engine_type = self.EngineType.sqlite3
+        self.engine_type = None
         self.open()
 
     def open(self):
-        # ===== uncomment to use without django.db:
-
-        # self.conn = sqlite3.connect('./task-tracker.sqlite')
-        # self.engine_type = self.EngineType.sqlite3
-
-        # self.conn = mysql.connector.Connect(user='root', password='root', host='127.0.0.1', database='sakila')
-        # self.engine_type = self.EngineType.mysql
-
-        # self.conn = psycopg2.connect(host="localhost", database="my-tests", user="postgres", password="sa")
-        # self.engine_type = self.EngineType.postgresql
-
-        # print(self.conn.autocommit)
-
-        # ====== uncomment to use with django.db:
-
         con = django.db.connections['default']
         engine = con.settings_dict["ENGINE"]
         if 'sqlite3' in engine:
@@ -247,8 +222,6 @@ class _DS(DataStore):
             self.conn.close()
             self.conn = None
 
-    # ORM-based raw-SQL helpers
-
     def get_all_raw(self, cls, params=None) -> []:
         if not params:
             params = ()
@@ -263,8 +236,6 @@ class _DS(DataStore):
         if len(rows) == 0:
             return 'No rows'
         return 'More than 1 row exists'
-
-    # ORM-based helpers
 
     def filter(self, cls, params: dict, fields: list = None):
         if fields:
@@ -293,8 +264,6 @@ class _DS(DataStore):
         rows_affected = queryset.update(**data)
         return rows_affected
 
-    # ORM-based CRUD methods
-
     def create_one(self, obj):
         obj.save()
 
@@ -319,24 +288,6 @@ class _DS(DataStore):
 
     def rollback(self):
         django.db.transaction.rollback()
-
-    def insert_row(self, sql, params, ai_values):
-        sql = self._format_sql(sql)
-        if len(ai_values) > 0:
-            if self.engine_type == self.EngineType.postgresql:
-                sql += ' RETURNING ' + ai_values[0][0]
-
-        def do_insert(cursor):
-            cursor.execute(sql, params)
-            if len(ai_values) > 0:
-                if self.engine_type == self.EngineType.postgresql:
-                    ai_values[0][1] = cursor.fetchone()[0]
-                else:
-                    ai_values[0][1] = cursor.lastrowid
-            if cursor.rowcount == 0:
-                raise Exception('No rows inserted')
-
-        self._exec(do_insert)
 
     @staticmethod
     def _exec_proc_pg(cursor, sql, params):
@@ -458,18 +409,11 @@ class _DS(DataStore):
 
         self._exec(fetch_all)
 
-    def _exec(self, func: callable):
-        if isinstance(self.conn, BaseDatabaseWrapper):
-            # https://stackoverflow.com/questions/8402898/how-can-i-access-the-low-level-psycopg2-connection-in-django
-            with django.db.connection.cursor() as cursor:
-                func(cursor)
-            return
-        # with self.conn.cursor() as cursor:  # sqlite3 error without django
-        cursor = self.conn.cursor()
-        try:
+    @staticmethod
+    def _exec(func: callable):
+        # https://stackoverflow.com/questions/8402898/how-can-i-access-the-low-level-psycopg2-connection-in-django
+        with django.db.connection.cursor() as cursor:
             func(cursor)
-        finally:
-            cursor.close()
 
     def _format_sql(self, sql):
         if isinstance(self.conn, BaseDatabaseWrapper):
