@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/static/styles.css" type="text/css"/>
-    <title>TODO</title>
+    <title>TODO Django SQLite3</title>
 </head>
 
 <body>
@@ -138,30 +140,9 @@
                 </table>
             </td>
             <td v-if="task_details">
-                <table class="controls">
-                    <tr>
-                        <td class="w100">
-                            <div class="title" id="subj">
-                                ${ current_subject }
-                            </div>
-                        </td>
-                        <td class="w1">
-                            <a href="#" @click="taskUpdate()">
-                                <input type="button" value="&#x2713;"/>
-                            </a>
-                        </td>
-                        <td class="w1">
-                            <a href="#" @click="taskDelete()">
-                                <input type="button" value="x"/>
-                            </a>
-                        </td>
-                        <td class="w1">
-                            <a href="#" @click="hideTaskDetails()">
-                                <input type="button" value="&lt;"/>
-                            </a>
-                        </td>
-                    </tr>
-                </table>
+                <div class="title" id="subj">
+                    ${ current_subject }
+                </div>
                 <table>
                     <tr>
                         <td class="form-label">Date</td>
@@ -192,6 +173,29 @@
                             <label>
                                 <textarea cols="40" rows="10" v-model="current_task.t_comments"></textarea>
                             </label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table class="controls">
+                                <tr>
+                                    <td class="w1">
+                                        <a href="#" @click="taskUpdate()">
+                                            <input type="button" value="&#x2713;"/>
+                                        </a>
+                                    </td>
+                                    <td class="w1">
+                                        <a href="#" @click="taskDelete()">
+                                            <input type="button" value="x"/>
+                                        </a>
+                                    </td>
+                                    <td class="w1">
+                                        <a href="#" @click="hideTaskDetails()">
+                                            <input type="button" value="&lt;"/>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
                         </td>
                     </tr>
                 </table>
