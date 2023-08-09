@@ -2,7 +2,7 @@
 <module type="PYTHON_MODULE" version="4">
   <component name="FacetManager">
     <facet type="Python" name="Python facet">
-      <configuration sdkName="Python 3.9 (py_django_todolist_sqlite3)" />
+      <configuration sdkName="Python 3.9 (py_django.db_drf_todolist_sqlite3)" />
     </facet>
   </component>
   <component name="Go" enabled="true" />
@@ -12,6 +12,6 @@
     </content>
     <orderEntry type="jdk" jdkName="Python 3.9 (todolist_django_sqlite3)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Python 3.9 (py_django_todolist_sqlite3) interpreter library" level="application" />
+    <orderEntry type="library" name="Python 3.9 (py_django.db_drf_todolist_sqlite3) interpreter library" level="application" />
   </component>
 </module>
