@@ -48,11 +48,14 @@ class OutParam:
 
 class DataStore:
 
-    def begin(self): pass
+    def begin(self):
+        pass
 
-    def commit(self): pass
+    def commit(self):
+        pass
 
-    def rollback(self): pass
+    def rollback(self):
+        pass
 
     # ORM-based raw-SQL helpers
 
