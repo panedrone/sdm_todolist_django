@@ -22,6 +22,8 @@ _ds = create_ds()
 dao_p = ProjectsDao(_ds)
 dao_t = TasksDao(_ds)
 
+DT_FORMAT = '%Y-%m-%d %H:%M:%S'
+
 
 class ProjectLiSerializer(serializers.ModelSerializer):
     class Meta:
@@ -42,6 +44,10 @@ class ProjectSerializer(serializers.ModelSerializer):  # HyperlinkedModelSeriali
 # list item without comments:
 
 class TaskLiSerializer(serializers.HyperlinkedModelSerializer):
+    t_id = serializers.IntegerField(required=True)
+    t_date = serializers.DateTimeField(required=True, format=DT_FORMAT)
+    t_priority = serializers.IntegerField(required=True)
+
     class Meta:
         model = TaskLi
         fields = ['t_id', 'p_id', 't_priority', 't_date', 't_subject']  # '__all__ not working here
@@ -61,7 +67,7 @@ class TaskEditSerializer(serializers.ModelSerializer):  # HyperlinkedModelSerial
     t_id = serializers.IntegerField(required=True)
     p_id = serializers.IntegerField(required=True)
     t_priority = serializers.IntegerField(required=True)
-    t_date = serializers.DateField(required=True)
+    t_date = serializers.DateTimeField(required=True, format=DT_FORMAT)
     t_subject = serializers.CharField(required=True, min_length=1, max_length=256)
     t_comments = serializers.CharField(required=False, allow_blank=True)
 
@@ -120,7 +126,7 @@ class ProjectTasksView(APIView):
         task = Task(**sz.validated_data)
         task.p_id = p_id
         now = datetime.now()
-        dt_string = now.strftime("%Y-%m-%d")
+        dt_string = now.strftime(DT_FORMAT)
         task.t_date = dt_string
         task.t_priority = 1
         task.t_comments = ''
