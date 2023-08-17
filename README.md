@@ -7,30 +7,42 @@ Front-end is written in Vue.js, SQLite3 is used as a database.
 
 dto.xml
 ```xml
-<dto-class name="dj-Project" ref="projects"/>
+<dto-classes>
 
-<dto-class name="dj-ProjectLi" ref="get_projects.sql" pk="p_id"/>
+    <dto-class name="dj-Project" ref="projects"/>
 
-<dto-class name="dj-Task" ref="tasks"/>
+    <dto-class name="dj-ProjectLi" ref="get_projects.sql" pk="p_id"/>
 
-<dto-class name="dj-TaskLi" ref="tasks">
+    <dto-class name="dj-Task" ref="tasks"/>
 
-    <header><![CDATA[
+    <dto-class name="dj-TaskLi" ref="tasks">
+
+        <header><![CDATA[
     # Task list item. No no t_comments.]]></header>
 
-    <field column="t_comments" type="-"/>
+        <field column="t_comments" type="-"/>
 
-</dto-class>
+    </dto-class>
+
+</dto-classes>
 ```
 ProjectsDao.xml
 ```xml
-<crud dto="dj-Project"/>
+<dao-classes>
+    
+    <crud dto="dj-Project"/>
 
-<query-dto-list dto="dj-ProjectLi" method="get_projects"/>
+    <query-dto-list dto="dj-ProjectLi" method="get_projects"/>
+
+</dao-classes>
 ```
 TasksDao.xml
 ```xml
-<crud dto="dj-Task"/>
+<dao-classes>
+    
+    <crud dto="dj-Task"/>
+
+</dao-classes>
 ```
 Generated code in action:
 ```go
