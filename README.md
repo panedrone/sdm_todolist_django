@@ -28,21 +28,21 @@ dto.xml
 ```
 ProjectsDao.xml
 ```xml
-<dao-classes>
+<dao-class>
     
     <crud dto="dj-Project"/>
 
     <query-dto-list dto="dj-ProjectLi" method="get_projects"/>
 
-</dao-classes>
+</dao-class>
 ```
 TasksDao.xml
 ```xml
-<dao-classes>
+<dao-class>
     
     <crud dto="dj-Task"/>
 
-</dao-classes>
+</dao-class>
 ```
 Generated code in action:
 ```go
