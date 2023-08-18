@@ -20,6 +20,7 @@
     Demo project: https://github.com/panedrone/sdm_demo_todolist_django
 
 """
+# import os
 
 import django.db
 from django.apps import AppConfig
@@ -77,6 +78,9 @@ class DataStore:
         pass
 
     # ORM-based helpers
+
+    def objects(self, cls):
+        pass
 
     def filter(self, cls, params: dict, fields: list = None):
         """
@@ -184,7 +188,7 @@ class DataStore:
         """
         :param sql: str
         :param params: array, values of SQL parameters.
-        :param callback: Ð° function delivering fetched rows to caller
+        :param callback: a callback function for delivering fetched rows to a caller
         :return: None
         """
         pass
@@ -240,6 +244,9 @@ class _DS(DataStore):
         if len(rows) == 0:
             return 'No rows'
         return 'More than 1 row exists'
+
+    def objects(self, cls):
+        return cls.objects
 
     def filter(self, cls, params: dict, fields: list = None):
         if fields:
