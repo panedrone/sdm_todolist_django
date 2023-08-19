@@ -46,6 +46,7 @@ class _ProjectsDao:
                 (select count(*) from tasks where p_id=p.p_id) as p_tasks_count 
                 from projects p 
                 order by p.p_id"""
+
         _res = []
 
         def _map_cb(row):
@@ -56,4 +57,5 @@ class _ProjectsDao:
             _res.append(_obj)
 
         self.ds.query_all_rows(sql, [], _map_cb)
+
         return _res
