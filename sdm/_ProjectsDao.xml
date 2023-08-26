@@ -8,6 +8,4 @@
         <delete/>
     </crud>
 
-    <query-dto-list dto="dj-ProjectLi" method="get_projects"/>
-
 </dao-class>
