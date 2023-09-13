@@ -16,12 +16,7 @@ dto.xml
     <dto-class name="dj-Task" ref="tasks"/>
 
     <dto-class name="dj-TaskLi" ref="tasks">
-
-        <header><![CDATA[
-    # Task list item. No no t_comments.]]></header>
-
         <field column="t_comments" type="-"/>
-
     </dto-class>
 
 </dto-classes>
