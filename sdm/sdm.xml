@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sdm xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="sdm.xsd">
+
+    <dto-class name="dj-Project" ref="projects"/>
+
+    <dto-class name="dj-ProjectLi" ref="get_projects.sql" pk="p_id"/>
+
+    <dto-class name="dj-Task" ref="tasks"/>
+
+    <dto-class name="dj-TaskLi" ref="tasks">
+
+        <header><![CDATA[
+    # Task list item. No t_comments.]]></header>
+
+        <field column="t_comments" type="-"/>
+
+    </dto-class>
+
+    <dao-class name="_ProjectsDao">
+
+        <crud dto="dj-Project">
+            <create/>
+            <read/>
+            <delete/>
+        </crud>
+
+    </dao-class>
+
+    <dao-class name="_TasksDao">
+
+        <crud dto="dj-Task">
+            <create/>
+            <read/>
+            <update/>
+            <delete/>
+        </crud>
+
+    </dao-class>
+
+</sdm>

@@ -5,9 +5,9 @@ Front-end is written in Vue.js, SQLite3 is used as a database.
 
 ![demo-go.png](demo-go.png)
 
-dto.xml
+sdm.xml
 ```xml
-<dto-classes>
+<sdm>
 
     <dto-class name="dj-Project" ref="projects"/>
 
@@ -18,26 +18,29 @@ dto.xml
     <dto-class name="dj-TaskLi" ref="tasks">
         <field column="t_comments" type="-"/>
     </dto-class>
-
-</dto-classes>
-```
-ProjectsDao.xml
-```xml
-<dao-class>
     
-    <crud dto="dj-Project"/>
+    <dao-class name="_ProjectsDao">
 
-    <query-dto-list dto="dj-ProjectLi" method="get_projects"/>
+        <crud dto="dj-Project">
+            <create/>
+            <read/>
+            <delete/>
+        </crud>
 
-</dao-class>
-```
-TasksDao.xml
-```xml
-<dao-class>
-    
-    <crud dto="dj-Task"/>
+    </dao-class>
 
-</dao-class>
+    <dao-class name="_TasksDao">
+
+        <crud dto="dj-Task">
+            <create/>
+            <read/>
+            <update/>
+            <delete/>
+        </crud>
+
+    </dao-class>
+
+</sdm>
 ```
 Generated code in action:
 ```go
