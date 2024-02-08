@@ -31,12 +31,7 @@ sdm.xml
 
     <dao-class name="_TasksDao">
 
-        <crud dto="dj-Task">
-            <create/>
-            <read/>
-            <update/>
-            <delete/>
-        </crud>
+        <crud dto="dj-Task"/>
 
     </dao-class>
 
