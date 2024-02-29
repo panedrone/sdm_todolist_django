@@ -21,6 +21,13 @@ class _TasksDao:
         """
         self.ds.create_one(p)
 
+    def read_task_list(self):
+        """
+        C(R)UD: tasks
+        :return: list[Task]
+        """
+        return self.ds.read_all(Task)
+
     def read_task(self, t_id):
         """
         C(R)UD: tasks
