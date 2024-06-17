@@ -1,55 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="static/favicon.ico">
 
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="/static/styles.css" type="text/css"/>
-    <title>TODO: Django, SQLite3</title>
+    <link rel="stylesheet" href="static/styles.css" type="text/css"/>
+    <title>TODO</title>
 </head>
 
 <body>
 
 <div id="app" v-cloak>
-    <table>
+    <table class="bg">
         <tr>
             <td>
-                <img src="/static/favicon.ico" alt=""/>
+                <div class="card">
+                    <h2>
+                        ${ whoiam }<span v-if="is_sqlx">, <a href="/swagger/index.html">Swagger</a></span>
+                    </h2>
+                </div>
             </td>
+        </tr>
+        <tr>
             <td>
-                <h2>
-                    SDM, django.db, DRF, SQLite3, Vue.js
-                </h2>
+                <div class="red-banner">
+                </div>
             </td>
         </tr>
     </table>
-    <table class="bg" style="padding: 4px;">
+    <table class="bg">
         <tr>
             <td>
-                <table>
-                    <tr>
-                        <td>
-                            <table class="section">
-                                <tr>
-                                    <th>Project</th>
-                                    <th>Tasks Count</th>
-                                </tr>
-                                <tr v-for="project in projects">
-                                    <td>
-                                        <a href="#" @click="renderGroupDetails(project.p_id)">
-                                            ${ project.p_name }
-                                        </a>
-                                    </td>
-                                    <td style="text-align: center;width: 80px;">
-                                        ${ project.p_tasks_count }
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <form method="post" enctype="multipart/form-data">
+                <div class="card">
+                    <table>
+                        <tr>
+                            <td>
+                                <table class="section">
+                                    <tr>
+                                        <th>Project</th>
+                                        <th>Tasks Count</th>
+                                    </tr>
+                                    <tr v-for="project in projects">
+                                        <td>
+                                            <a href="#" @click="renderProjectDetails(project.p_id)">
+                                                ${ project.p_name }
+                                            </a>
+                                        </td>
+                                        <td style="text-align: center;width: 80px;">
+                                            ${ project.p_tasks_count }
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
                                 <table class="controls">
                                     <tr>
                                         <td>
@@ -58,78 +63,75 @@
                                             </label>
                                         </td>
                                         <td class="w1">
-                                            <a href="#" @click="groupCreate()">
+                                            <a href="#" @click="projectCreate()">
                                                 <input type="button" value="+"/>
                                             </a>
                                         </td>
                                     </tr>
                                 </table>
-                            </form>
-                        </td>
-                    </tr>
-                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
             </td>
             <td v-if="project_details">
-                <table>
-                    <tr>
-                        <td>
-                            <form method="post">
+                <div class="card">
+                    <table>
+                        <tr>
+                            <td>
                                 <table class="controls">
                                     <tr>
                                         <td>
                                             <label>
-                                                <input type="text" class="group-header"
+                                                <input type="text" class="project-header"
                                                        v-model="current_project.p_name"/>
                                             </label>
                                         </td>
                                         <td class="w1">
-                                            <a href="#" @click="groupUpdate()">
+                                            <a href="#" @click="projectUpdate()">
                                                 <input type="button" value="&#x2713;"/>
                                             </a>
                                         </td>
                                         <td class="w1">
-                                            <a href="#" @click="groupDelete()">
+                                            <a href="#" @click="projectDelete()">
                                                 <input type="button" value="x"/>
                                             </a>
                                         </td>
                                         <td class="w1">
-                                            <a href="#" @click="hideProjectDetails">
+                                            <a href="#" @click="hideProjectDetails()">
                                                 <input type="button" value="&lt;"/>
                                             </a>
                                         </td>
                                     </tr>
                                 </table>
-                            </form>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <table class="section">
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Subject</th>
-                                    <th>Priority</th>
-                                </tr>
-                                <tr v-for="t in tasks">
-                                    <td>
-                                        ${ t.t_date }
-                                    </td>
-                                    <td>
-                                        <a href="#" @click="renderTaskDetails(t.t_id)">
-                                            ${ t.t_subject }
-                                        </a>
-                                    </td>
-
-                                    <td style="text-align: center;">
-                                        ${ t.t_priority }
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <form method="post">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table class="section">
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Subject</th>
+                                        <th>Priority</th>
+                                    </tr>
+                                    <tr v-for="t in tasks">
+                                        <td>
+                                            ${ t.t_date }
+                                        </td>
+                                        <td>
+                                            <a href="#" @click="renderTaskDetails(t.t_id)">
+                                                ${ t.t_subject }
+                                            </a>
+                                        </td>
+                                        <td style="text-align: center;">
+                                            ${ t.t_priority }
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
                                 <table class="controls">
                                     <tr>
                                         <td>
@@ -144,80 +146,85 @@
                                         </td>
                                     </tr>
                                 </table>
-                            </form>
-                        </td>
-                    </tr>
-                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
             </td>
             <td v-if="task_details">
-                <div class="title" id="subj">
-                    ${ current_subject }
-                </div>
-                <table>
-                    <tr>
-                        <td class="form-label">Date</td>
-                        <td>
-                            <label>
-                                <input type="text" v-model="current_task.t_date"/>
-                            </label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="form-label">Subject</td>
-                        <td class="w100">
-                            <label>
-                                <input type="text" v-model="current_task.t_subject"/>
-                            </label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="form-label">Priority</td>
-                        <td>
-                            <label>
-                                <input type="text" v-model="current_task.t_priority"/>
-                            </label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">
-                            <label>
-                                <textarea cols="40" rows="10" v-model="current_task.t_comments"></textarea>
-                            </label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <table class="controls">
-                                <tr>
-                                    <td class="w1">
-                                        <a href="#" @click="taskUpdate()">
-                                            <input type="button" value="&#x2713;"/>
-                                        </a>
-                                    </td>
-                                    <td class="w1">
-                                        <a href="#" @click="taskDelete()">
-                                            <input type="button" value="x"/>
-                                        </a>
-                                    </td>
-                                    <td class="w1">
-                                        <a href="#" @click="hideTaskDetails()">
-                                            <input type="button" value="&lt;"/>
-                                        </a>
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-                </table>
-                <div style="color: crimson;max-width: 310px;">
-                    ${ task_error }
+                <div class="card">
+                    <div class="title" id="subj">
+                        ${ current_subject }
+                    </div>
+                    <table>
+                        <tr>
+                            <td class="form-label">Date</td>
+                            <td>
+                                <label>
+                                    <input type="text" v-model="current_task.t_date"/>
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="form-label">Subject</td>
+                            <td class="w100">
+                                <label>
+                                    <input type="text" v-model="current_task.t_subject"/>
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="form-label">Priority</td>
+                            <td>
+                                <label>
+                                    <input type="text" v-model="current_task.t_priority"/>
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <label>
+                                    <textarea cols="40" rows="10" v-model="current_task.t_comments"></textarea>
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table class="controls">
+                                    <tr>
+                                        <td class="w1">
+                                            <a href="#" @click="taskUpdate()">
+                                                <input type="button" value="&#x2713;"/>
+                                            </a>
+                                        </td>
+                                        <td class="w1">
+                                            <a href="#" @click="taskDelete()">
+                                                <input type="button" value="x"/>
+                                            </a>
+                                        </td>
+                                        <td class="w1">
+                                            <a href="#" @click="hideTaskDetails()">
+                                                <input type="button" value="&lt;"/>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                    <div style="color: crimson;max-width: 310px;">
+                        ${ task_error }
+                    </div>
                 </div>
             </td>
         </tr>
     </table>
 </div>
 
-<script src="/static/js/vue.js"></script>
+<!--https://v2.vuejs.org/v2/guide/-->
+
+<script src="/static/js/vue@2.dist.js"></script>
+
 <script src="/static/js/app.js"></script>
 
 </body>

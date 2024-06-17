@@ -3200,7 +3200,7 @@
    */
   function queueActivatedComponent(vm) {
       // setting _inactive to false here so that a render function can
-      // rely on checking whether it's in an inactive tree (e.g. router-view)
+      // rely on checking whether it's in an inactive tree (e.g. handlers-view)
       vm._inactive = false;
       activatedChildren.push(vm);
   }
@@ -4881,7 +4881,7 @@
           }
           if (vnode.data.keepAlive) {
               if (context._isMounted) {
-                  // vue-router#1212
+                  // vue-handlers#1212
                   // During updates, a kept-alive component's child components may
                   // change, so directly walking the tree here may call activated hooks
                   // on incorrect children. Instead we push them into a queue which will

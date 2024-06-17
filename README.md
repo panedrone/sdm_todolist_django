@@ -1,10 +1,8 @@
-# sdm_todolist_django
-
 A project demonstrating how to use [SQL DAL Maker](https://github.com/panedrone/sqldalmaker) + Python/ Django.
 
 Front-end is written in Vue.js 2.7. RDBMS is SQLite3.
 
-![demo-go.png](demo-go.png)
+![sdm-todo-app.png](sdm-todo-app.png)
 
 sdm.xml
 ```xml
